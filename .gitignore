@@ -390,6 +390,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # Mine
-#*.vcxproj.filters
-#*.vcxproj
-#*.sln
+*.vcxproj.filters
+*.vcxproj
+*.sln
