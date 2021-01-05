@@ -15,7 +15,7 @@ private:
 	int ActiveCount, FrostedCount, KilledCount;	//no. of enemies (Active, Frosted, killed so far)
 	int CurrentTimeStep;
 	//Enemy * BEnemiesForDraw[MaxEnemyCount]; // This Array of Pointers is used for drawing elements in the GUI
-								  			// No matter what list type you are using to hold enemies, 
+											// No matter what list type you are using to hold enemies, 
 											// you must pass the enemies to the GUI function as an array of enemy pointers. 
 											// At every time step, you should update those pointers 
 											// to point to the current active enemies 
@@ -23,6 +23,8 @@ private:
 
 	Queue<Enemy*> Q_Inactive;		//Queue of inactive enemies
 
+	Queue<Enemy *> Q_ActiveFreezers;	//queue for active freezers
+	Queue<Enemy*> Q_Killed;		//queue for killer enemies
 
 	/// ==> 
 	//	DEMO-related members. Should be removed in phases 1&2
@@ -37,7 +39,7 @@ private:
 	//
 
 public:
-	
+
 	Battle();
 	void AddAllListsToDrawingList();		//Add enemy lists (inactive, active,.....) to drawing list to be displayed on user interface
 	Castle * GetCastle();
@@ -52,5 +54,11 @@ public:
 	//
 	// TODO: Add More Member Functions As Needed
 	//
+	void ReadFile(); //to read the input file
+
+	//game modes
+	void Interactive_Mode();
+	void Silent_Mode();
+	void Step_Mode();
 };
 
