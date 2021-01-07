@@ -20,7 +20,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -271,6 +271,9 @@
     </ClCompile>
     <ClCompile Include="Demo_Main.cpp" />
     <ClCompile Include="Enemies\Enemy.cpp" />
+    <ClCompile Include="Enemies\Fighter.cpp" />
+    <ClCompile Include="Enemies\Freezer.cpp" />
+    <ClCompile Include="Enemies\Healer.cpp" />
     <ClCompile Include="GUI\GUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -298,7 +301,11 @@
     <ClInclude Include="CMUgraphicsLib\jpeg\jversion.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="Enemies\Enemy.h" />
+    <ClInclude Include="Enemies\Fighter.h" />
+    <ClInclude Include="Enemies\Freezer.h" />
+    <ClInclude Include="Enemies\Healer.h" />
     <ClInclude Include="Generic_DS\Node.h" />
+    <ClInclude Include="Generic_DS\PriorityQ.h" />
     <ClInclude Include="Generic_DS\Queue.h" />
     <ClInclude Include="GUI\GUI.h" />
   </ItemGroup>
