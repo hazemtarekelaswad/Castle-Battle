@@ -1,6 +1,6 @@
 #pragma once
-#include "Enemies/Enemy.h"
-#include "Castle/Castle.h"
+#include "Enemy.h"
+#include "../Castle/Castle.h"
 class Fighter : public Enemy
 {
 	GUI* pGUI;
@@ -10,7 +10,7 @@ public:
 
 	void Act();
 
-	void Move();
+	void Move() override;
 
 	~Fighter(void);
 };

@@ -6,7 +6,8 @@ Enemy::Enemy(int id, int arrTime, int d) : ID(id),ArrvTime(arrTime)
 	SetDistance(d);
 }
 
-Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL, double s)  : ID(id), ArrvTime(arrTime)
+Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL, double s)  
+	: ID(id), ArrvTime(arrTime), OrgHealth(Health)
 {
 	Enemy_Type = type;
 	SetHealth (H);
@@ -14,7 +15,6 @@ Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL,
 	SetReloadTime(RL);
 	SetSpeed(s);
 
-	OrgHealth = Health;
 	FirstShotDelay = 0;
 	KillDelay = 0;
 	LifeTime = 0;
@@ -80,7 +80,7 @@ void Enemy :: SetHealth(double H)
 void Enemy ::  SetSpeed(double s)
 { 
 	if (s > 0)
-	Speed = s;
+		Speed = s;
 
 	else 
 		Speed = 0;
