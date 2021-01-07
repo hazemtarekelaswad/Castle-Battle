@@ -15,7 +15,7 @@ void Fighter :: Act()
 void Fighter :: Move()
 {
 	if (status == ACTV)
-		SetDistance(Distance - (Health < 0.5 * OrgHealth ? 0.5 * Speed : Speed));
+		MoveForward();
 }
 
 

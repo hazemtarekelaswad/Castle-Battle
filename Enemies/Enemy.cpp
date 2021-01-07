@@ -51,10 +51,12 @@ void Enemy::DecrementDist()
 
 void Enemy::SetDistance(int d)
 {
-	if (d >= MinDistance && d <= MaxDistance)
-		Distance = d;
-	else
+	if (d < MinDistance)
+		Distance = MinDistance;
+	else if (d > MaxDistance)
 		Distance = MaxDistance;
+	else
+		Distance = d;
 }
 
 
@@ -201,4 +203,8 @@ bool Enemy :: Killed()
 	if (Health <= 0)
 		return true;
 	return false;
+}
+
+void Enemy::MoveForward() {
+	SetDistance(Distance - (Health < 0.5 * OrgHealth ? 0.5 * Speed : Speed));
 }
