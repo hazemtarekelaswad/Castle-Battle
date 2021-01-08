@@ -6,9 +6,13 @@ Freezer::Freezer(int id, int arrTime, double health, double power, int RL, int s
 {
 }
 
-void Freezer :: Active(Castle * C)
+void Freezer :: Act(Castle * castle, int currTimeStep)
 {
+	if ((currTimeStep - ArrvTime) % ReloadTime + 1)		// to check if the freezer is at reload period
+		return;
 
+	if (status == ACTV) {}
+		// Formulate an equation for freezing the castle
 }
 
 void Freezer :: Move()

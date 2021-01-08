@@ -22,7 +22,7 @@ protected:
 	                //Always positive (ranges from 2 to 60)
 	double Health;	//Enemy health
 
-	double OrgHealth; // Enemy health at the start of the game
+	const double OrgHealth; // Enemy health at the start of the game
 
 	double Speed;
 	
@@ -106,14 +106,10 @@ public:
 	int GetID() const;
 	
 	ENMY_STATUS GetStatus() const;
-	// Virtual Functions: ----------------
 
-	//virtual void Move();	//All enemies can move
-	//virtual void Act();	//Acting means fighting or healing
-	
-	//
-	// TODO: Add More Member Functions As Needed
-	//
+	void MoveForward();
+
+	virtual void Move() = 0;	
 
 	bool Freezed();
 

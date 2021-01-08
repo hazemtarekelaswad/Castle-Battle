@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(int id, int arrTime, int d) : ID(id),ArrvTime(arrTime)
+Enemy::Enemy(int id, int arrTime, int d) : ID(id),ArrvTime(arrTime), OrgHealth(Health)
 {   
 	SetDistance(d);
 }

@@ -6,9 +6,17 @@ Healer::Healer(int id, int arrTime, double health, double power, int RL, int spe
 {
 }
 
-void Healer :: Active(Castle * C)
+void Healer :: Act(Enemy * enemy, int currTimeStep)
 {
+	if ((currTimeStep - ArrvTime) % ReloadTime + 1)		// to check if the healer is at reload period
+		return;
 
+	if (isForward && enemy->GetDistance() < Distance - 2 
+		|| !isForward && enemy->GetDistance() > Distance + 2)
+		return;
+
+	if (status == ACTV) {}
+		// Formulate an equation for healing other enemies
 }
 
 void Healer :: Move()
