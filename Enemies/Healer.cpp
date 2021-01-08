@@ -1,5 +1,6 @@
 #include "Healer.h"
 #include "../Defs.h"
+#include <cmath>
 
 Healer::Healer(int id, int arrTime, double health, double power, int RL, int speed) 
 	: Enemy (id, arrTime, HEALER, health, power, RL, speed), isForward(true)
@@ -15,8 +16,17 @@ void Healer :: Act(Enemy * enemy, int currTimeStep)
 		|| !isForward && enemy->GetDistance() > Distance + 2)
 		return;
 
-	if (status == ACTV) {}
 		// Formulate an equation for healing other enemies
+	if (status == ACTV && enemy->GetStatus() == ACTV) {
+		double K = (enemy->GetHealth() > 0.5 * enemy->GetOrgHealth() ? 0.5 : 1);
+		int dist = std::abs(Distance - enemy->GetDistance());
+		double increament = (K * Power * Health) / ((dist == 0 ? 1 : dist) * enemy->GetHealth());
+
+		if (enemy->GetHealth() + increament > enemy->GetOrgHealth())
+			enemy->SetHealth(enemy->GetOrgHealth());
+		else
+			enemy->SetHealth(enemy->GetHealth() + increament);
+	}
 }
 
 void Healer :: Move()

@@ -151,6 +151,11 @@ double Enemy :: GetHealth () const
 	return Health;
 }
 
+double Enemy::GetOrgHealth() const
+{
+	return OrgHealth;
+}
+
 double Enemy :: GetSpeed() const
 {
 	return Speed;
@@ -206,5 +211,5 @@ bool Enemy :: Killed()
 }
 
 void Enemy::MoveForward() {
-	SetDistance(Distance - (Health < 0.5 * OrgHealth ? 0.5 * Speed : Speed));
+	SetDistance(Distance - (Health < 0.5 * OrgHealth ? (int)Speed / 2 : Speed));
 }

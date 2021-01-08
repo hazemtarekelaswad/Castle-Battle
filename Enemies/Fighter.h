@@ -8,7 +8,7 @@ class Fighter : public Enemy
 public:
 	Fighter(int id,int arrTime, double health, double power, int RL, int speed);
 
-	void Act(Castle* castle);
+	void Act(Castle* castle, int currTimeStep);
 
 	void Move() override;
 

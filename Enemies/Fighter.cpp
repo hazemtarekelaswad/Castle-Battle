@@ -9,7 +9,7 @@ Fighter::Fighter(int id, int arrTime, double health, double power, int RL, int s
 
 void Fighter :: Act(Castle* castle, int currTimeStep)
 {
-	if ((currTimeStep - ArrvTime) % ReloadTime + 1)		// to check if the fighter is at reload period in order not to act
+	if ((currTimeStep - ArrvTime) % (ReloadTime + 1))		// to check if the fighter is at reload period in order not to act
 		return;
 
 	if (status == ACTV)

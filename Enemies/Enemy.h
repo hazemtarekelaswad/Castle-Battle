@@ -46,10 +46,6 @@ protected:
 
 	ENMY_TYPE Enemy_Type; // Type of the enemy (Fighter, Healer, Freezer)
 
-	float K; // Factor constant in the equations
-	//
-	// TODO: Add More Data Members As Needed
-	//
 
 public:
 	Enemy(int id, int arrTime, int d = MaxDistance);
@@ -87,6 +83,8 @@ public:
 	
 	double GetHealth() const;
 	
+	double GetOrgHealth() const
+
 	double GetSpeed() const;
 	
 	double GetPower() const;
