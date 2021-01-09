@@ -4,6 +4,7 @@
 #include "Castle\Castle.h"
 #include "Generic_DS\Queue.h"
 #include "GUI\GUI.h"
+#include "Generic_DS/PriorityQ.h"
 
 // it is the controller of the project
 class Battle
@@ -25,6 +26,9 @@ private:
 
 	Queue<Enemy *> Q_ActiveFreezers;	//queue for active freezers
 	Queue<Enemy*> Q_Killed;		//queue for killer enemies
+	PriorityQ<Enemy*> PQ_ActiveFighters; //priorityQ for active fighters
+	PriorityQ<Enemy*> PQ_Frozen;		//priorityQ for frozen enemies
+
 
 	/// ==> 
 	//	DEMO-related members. Should be removed in phases 1&2

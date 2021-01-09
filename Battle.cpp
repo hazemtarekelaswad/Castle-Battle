@@ -92,11 +92,35 @@ void Battle::Interactive_Mode() {
 	pGUI->PrintMessage("Welcome to Interactive Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
+	while (KilledCount < EnemyCount)	//as long as some enemies are alive (should be updated in next phases)
+	{
+		CurrentTimeStep++;
+		ActivateEnemies();
 
+		//update enemies here
+
+		pGUI->ResetDrawingList();
+		AddAllListsToDrawingList();
+		pGUI->UpdateInterface(CurrentTimeStep);
+		pGUI->waitForClick();
+	}
 }
 void Battle::Step_Mode() {
 	pGUI->PrintMessage("Welcome to Step Mode");
 	pGUI->waitForClick();
+	this->ReadFile();
+	while (KilledCount < EnemyCount)	//as long as some enemies are alive (should be updated in next phases)
+	{
+		CurrentTimeStep++;
+		ActivateEnemies();
+
+		//update enemies here
+
+		pGUI->ResetDrawingList();
+		AddAllListsToDrawingList();
+		pGUI->UpdateInterface(CurrentTimeStep);
+		Sleep(1000);
+	}
 }
 
 
@@ -154,11 +178,35 @@ void Battle::AddAllListsToDrawingList()
 {
 	//Add inactive queue to drawing list
 	int InactiveCount;
-	Enemy* const * EnemyList = Q_Inactive.toArray(InactiveCount);
+	Enemy* const * EnemyListInactive = Q_Inactive.toArray(InactiveCount);
 	for (int i = 0; i < InactiveCount; i++)
-		pGUI->AddToDrawingList(EnemyList[i]);
+		pGUI->AddToDrawingList(EnemyListInactive[i]);
 
 	//Add other lists to drawing list
+	int ActiveFreezersCount;
+	Enemy* const * EnemyListActiveFreezers = Q_ActiveFreezers.toArray(ActiveFreezersCount);
+	for (int i = 0; i < ActiveFreezersCount; i++) {
+		pGUI->AddToDrawingList(EnemyListActiveFreezers[i]);
+	}
+
+	int KilledCount;
+	Enemy* const * EnemyListKilled = Q_Killed.toArray(KilledCount);
+	for (int i = 0; i < KilledCount; i++) {
+		pGUI->AddToDrawingList(EnemyListKilled[i]);
+	}
+
+	int ActiveFightersCount;
+	Enemy* const * EnemyListActiveFighters = PQ_ActiveFighters.toArray(ActiveFightersCount);
+	for (int i = 0; i < ActiveFightersCount; i++) {
+		pGUI->AddToDrawingList(EnemyListActiveFighters[i]);
+	}
+
+	int FrozenCount;
+	Enemy* const * EnemyListFrozen = PQ_Frozen.toArray(FrozenCount);
+	for (int i = 0; i < FrozenCount; i++) {
+		pGUI->AddToDrawingList(EnemyListFrozen[i]);
+	}
+
 	//TO DO
 	//In next phases, you should add enemies from different lists to the drawing list
 	//For the sake of demo, we will use DemoList
