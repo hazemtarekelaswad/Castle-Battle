@@ -1,7 +1,10 @@
 #include "Battle.h"
 #include <time.h>
 #include <fstream>
-
+#include "Castle/Castle.h"
+#include "Enemies/Fighter.h"
+#include "Enemies/Healer.h"
+#include "Enemies/Freezer.h"
 Battle::Battle()
 {
 	EnemyCount = 0;
@@ -55,7 +58,9 @@ void Battle::ReadFile() {
 	string Filename = pGUI->GetString(); //file name to be input by the user
 	ifstream Input(Filename + ".txt");
 	int ch, n, cp;
-	Input >> ch >> n >> cp;
+	Input >> ch >> n >> cp;		//castle health and maximum number of enemies hit
+	Castle pCastle(ch, n, cp);
+	this->BCastle = pCastle;
 	int enemyNumber;
 	Input >> enemyNumber;
 
@@ -66,7 +71,7 @@ void Battle::ReadFile() {
 	{
 		//for now we will get the id and arrival time
 		Input >> ID >> TYP >> AT >> H >> POW >> RLD >> SPD;
-		pE = new Enemy(ID, AT);
+		pE = new Enemy(ID, AT,TYP,H,POW,RLD,SPD);
 		if (H > 0) {
 
 			pE->SetStatus(INAC); //initiall all enemies are inactive
@@ -92,7 +97,7 @@ void Battle::Interactive_Mode() {
 	pGUI->PrintMessage("Welcome to Interactive Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
@@ -109,7 +114,7 @@ void Battle::Step_Mode() {
 	pGUI->PrintMessage("Welcome to Step Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
@@ -207,11 +212,17 @@ void Battle::AddAllListsToDrawingList()
 		pGUI->AddToDrawingList(EnemyListFrozen[i]);
 	}
 
+	int ActiveHealersCount;
+	Enemy* const * EnemyListHealers = S_ActiveHealers.toArray(ActiveHealersCount);
+	for (int i = 0; i < ActiveHealersCount; i++) {
+		pGUI->AddToDrawingList(EnemyListHealers[i]);
+	}
+
 	//TO DO
 	//In next phases, you should add enemies from different lists to the drawing list
 	//For the sake of demo, we will use DemoList
-	for (int i = 0; i < DemoListCount; i++)
-		pGUI->AddToDrawingList(DemoList[i]);
+	/*for (int i = 0; i < DemoListCount; i++)
+		pGUI->AddToDrawingList(DemoList[i]);*/
 }
 
 //check the inactive list and activate all enemies that has arrived
@@ -225,7 +236,19 @@ void Battle::ActivateEnemies()
 
 		Q_Inactive.dequeue(pE);	//remove enemy from the queue
 		pE->SetStatus(ACTV);	//make status active
-		AddtoDemoList(pE);		//move it to demo list (for demo purposes)
+		/*AddtoDemoList(pE);	*/	//move it to demo list (for demo purposes)
+		switch (pE->GetType())		//add emeies to respective lists
+		{
+		case(FIGHTER):
+			PQ_ActiveFighters.enqueue(pE);
+			break;
+		case(HEALER):
+			S_ActiveHealers.push(pE);
+			break;
+		case(FREEZER):
+			Q_ActiveFreezers.enqueue(pE);
+			break;
+		}
 	}
 }
 
@@ -278,5 +301,34 @@ void Battle::Demo_UpdateEnemies()
 
 			break;
 		}
+	}
+}
+
+void Battle::UpdateFighters() {
+	Fighter currentFighter(0,0,0,0,0,0);
+	Healer* currentHealer;
+	Freezer currentFreezer(0,0,0,0,0,0);
+	for (int i = 0; i < EnemyCount; i++) {
+		PQ_ActiveFighters.peekFront(currentFighter);
+		currentHealer = &(S_ActiveHealers.peek());
+		Q_ActiveFreezers.peekFront(currentFreezer);
+
+
+		pE->DecrementDist();	//move to the castle
+		pE->Act(this->GetCastle(), CurrentTimeStep);		//attack the castle
+		this->GetCastle()->Act();		//the castle should also hit the enemies
+		if (pE->GetHealth() < 1) {	//if the enemy is killed move the enemy to the killed list
+			if (PQ_ActiveFighters.dequeue(pE)) {
+				//if the enemy is dequeued succesfully from the fighters list
+				//move him to the killed list
+				pE->SetStatus(KILD);
+				Q_Killed.enqueue(pE);
+			}
+			else {
+				pGUI->PrintMessage("Something went wrong when killing enemy");
+				break;
+			}
+		}
+	
 	}
 }

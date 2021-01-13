@@ -42,6 +42,10 @@ ENMY_STATUS Enemy::GetStatus() const
 	return status;
 }
 
+ENMY_TYPE Enemy::GetType() const {
+	return Enemy_Type;
+}
+
 
 void Enemy::DecrementDist()
 {

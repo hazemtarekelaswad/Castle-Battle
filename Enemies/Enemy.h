@@ -2,6 +2,7 @@
 
 #include "..\Defs.h"
 #include "..\CMUgraphicsLib\CMUgraphics.h"
+#include "../Castle/Castle.h"
 
 class GUI;
 // Enemy is the base class of each type of enemy
@@ -113,5 +114,7 @@ public:
 
 	bool Killed();
 
+	virtual void Act(Castle*,int) = 0;		//to be implemented in child classes
+	ENMY_TYPE GetType() const;
 };
 
