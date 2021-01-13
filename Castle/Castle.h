@@ -3,18 +3,22 @@
 class Castle
 {
 	double Health;
-
-	//
-	// TODO: Add More Data Members As Needed
-	//
+	int MaxEnemies;		// the maximum number of enemies a castle can attack at any time step
+	double Power;
 
 public:
+	Castle();
+	Castle(double h, int n, double p);
 
 	void SetHealth(double h);
-	double GetHealth() const;
+	void SetMaxEnemies(int n);
+	void SetPower(double p);
 
-	//
-	// TODO: Add More Member Functions As Needed
-	//
+	double GetHealth() const;
+	int GetMaxEnemies() const;
+	double GetPower() const;
+
+	void Act()
+
 };
 
