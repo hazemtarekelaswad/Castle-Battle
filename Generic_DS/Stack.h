@@ -4,21 +4,19 @@ template < typename T>
 class Stack
 {
 	Node<T>*Top;
-	int size;
 public:
 	Stack();
 	bool isEmpty()const;
 	bool push(T it);
 	bool pop(T&it);
 	T peek()const;
-	const T** toArray(int& size);
+	const T* toArray(int& size);
 };
 
 template < typename T>
 Stack<T> ::Stack()
 {
 	Top = NULL;
-	size = 0;
 }
 
 template < typename T>
@@ -32,7 +30,8 @@ bool Stack<T> ::isEmpty()const
 template < typename T>
 T Stack<T> ::peek()const
 {
-	return Top->getItem();
+	if(!isEmpty())
+		return Top->getItem();
 }
 
 template < typename T>
@@ -43,7 +42,6 @@ bool Stack<T> ::pop(T&it)
 	Top = Top->getNext();
 	it = Temp->getItem();
 	delete Temp;
-	--size;
 	return true;
 }
 
@@ -54,20 +52,31 @@ bool Stack<T> ::push(T it)
 	if (!Added)return false;
 	Added->setNext(Top);
 	Top = Added;
-	++size;
 	return true;
 }
 
-template<typename T>
-const T** Stack<T>::toArray(int& length) {
-	length = size;
-	if (!size)
+template <typename T>
+const T* Stack<T>::toArray(int& count)
+{
+	count = 0;
+
+	if (!head)
 		return nullptr;
-	Node<T>* temp = Top;
-	T** newArray = new T*[length];
-	for (int i = 0; i < length; ++i) {
-		newArray[i] = &temp->getItem();
-		temp = temp->getNext();
+	//counting the no. of items in the Queue
+	Node<T>* p = head;
+	while (p)
+	{
+		count++;
+		p = p->getNext();
 	}
-	return newArray;
+
+
+	T* Arr = new T[count];
+	p = head;
+	for (int i = 0; i < count; i++)
+	{
+		Arr[i] = p->getItem();
+		p = p->getNext();
+	}
+	return Arr;
 }
