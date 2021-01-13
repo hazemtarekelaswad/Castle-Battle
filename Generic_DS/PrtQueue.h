@@ -1,12 +1,12 @@
 #ifndef __PRTQUEUE_H_
 #define __PRTQUEUE_H_
 
-#include "Node.h"
+#include "PrtNode.h"
 template <typename T>
 class PrtQueue
 {
 private :
-	Node<T>* frontPtr;
+	PrtNode<T>* frontPtr;
 public :
 	PrtQueue();	
 	bool isEmpty() const ;
@@ -26,7 +26,7 @@ PrtQueue<T>::PrtQueue()
 template <typename T>
 bool PrtQueue<T>::enqueuePriority(double Priority_newEntry , const T& newEntry)
 {
-	Node<T>* Newnode = new Node<T>;
+	PrtNode<T>* Newnode = new PrtNode<T>;
 	Newnode ->setItem(newEntry);
 	Newnode->setPriority(Priority_newEntry); 
 	if ( frontPtr == nullptr)
@@ -41,7 +41,7 @@ bool PrtQueue<T>::enqueuePriority(double Priority_newEntry , const T& newEntry)
 		frontPtr = Newnode;
 		return true;
 	}
-	Node<T>* ptr = frontPtr;
+	PrtNode<T>* ptr = frontPtr;
 	if (!ptr->getNext())
 	{
 		frontPtr ->setNext(Newnode);
@@ -75,7 +75,7 @@ bool PrtQueue<T>:: dequeue(T& frntEntry)
 	if(isEmpty())
 		return false;
 
-	Node<T>* nodeToDeletePtr = frontPtr;
+	PrtNode<T>* nodeToDeletePtr = frontPtr;
 	frntEntry = frontPtr->getItem();
 	frontPtr = frontPtr->getNext();
 	// Queue is not empty; remove front
@@ -114,7 +114,7 @@ T* PrtQueue<T>::toArray(int& count)
 	if(!frontPtr)
 		return nullptr;
 	//counting the no. of items in the Queue
-	Node<T>* p = frontPtr;
+	PrtNode<T>* p = frontPtr;
 	while(p)
 	{
 		count++;
