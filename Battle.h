@@ -5,6 +5,7 @@
 #include "Generic_DS\Queue.h"
 #include "GUI\GUI.h"
 #include "Generic_DS/PriorityQ.h"
+#include "Generic_DS/Stack.h"
 
 // it is the controller of the project
 class Battle
@@ -25,9 +26,10 @@ private:
 	Queue<Enemy*> Q_Inactive;		//Queue of inactive enemies
 
 	Queue<Enemy *> Q_ActiveFreezers;	//queue for active freezers
-	Queue<Enemy*> Q_Killed;		//queue for killer enemies
+	Queue<Enemy*> Q_Killed;		//queue for killed enemies
 	PriorityQ<Enemy*> PQ_ActiveFighters; //priorityQ for active fighters
 	PriorityQ<Enemy*> PQ_Frozen;		//priorityQ for frozen enemies
+	Stack<Enemy*> S_ActiveHealers; //stack for active healers
 
 
 	/// ==> 
@@ -54,7 +56,7 @@ public:
 	void AddtoDemoList(Enemy* Ptr);		//Add Enemy to the demo queue of enemies (for demo purposes only)
 	void Just_A_Demo();	//just to show a demo and should be removed in phase1 1 & 2
 	void Demo_UpdateEnemies();	//Randomly update enemies distance/status (for demo purposes)
-
+	void UpdateFighters();
 	//
 	// TODO: Add More Member Functions As Needed
 	//

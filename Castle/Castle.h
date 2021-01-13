@@ -18,7 +18,7 @@ public:
 	int GetMaxEnemies() const;
 	double GetPower() const;
 
-	void Act()
+	void Act();
 
 };
 
