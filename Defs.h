@@ -29,6 +29,13 @@ enum ENMY_STATUS	//enemy status
 	ENMY_STATUS_CNT	//Status count
 };
 
+enum CSL_STATUS	//castle status
+{
+	CSL_ACTV,	
+	CSL_FRST,	
+	CSL_STATUS_CNT	
+};
+
 
 enum PROG_MODE	//mode of the program interface
 {

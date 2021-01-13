@@ -314,6 +314,7 @@ void Battle::UpdateFighters() {
 		Q_ActiveFreezers.peekFront(currentFreezer);
 
 
+
 		pE->DecrementDist();	//move to the castle
 		pE->Act(this->GetCastle(), CurrentTimeStep);		//attack the castle
 		this->GetCastle()->Act();		//the castle should also hit the enemies
