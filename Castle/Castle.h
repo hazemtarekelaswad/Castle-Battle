@@ -18,6 +18,7 @@ class Castle
 	double IceAmount;
 	int FirstFreezeStep;
 
+
 public:
 	Castle();
 	Castle(double h, int n, double p, double th);

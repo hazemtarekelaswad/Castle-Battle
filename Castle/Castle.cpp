@@ -5,6 +5,7 @@ Castle::Castle() {}
 
 Castle::Castle(double h, int n, double p, double th)
 	: MaxEnemies(n), Threshold(th), IceAmount(0), FirstFreezeStep(0), OrgHealth(h)
+
 {
 	SetHealth(h);
 	SetPower(p);

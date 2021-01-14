@@ -193,6 +193,7 @@ int Enemy::GetFreezeTime() const {
 
 int Enemy::GetFrstTimeFrosted() const {
 	return FrstTimeFrosted;
+
 }
 
 int Enemy ::  GetReloadTime() const
