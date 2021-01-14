@@ -4,7 +4,8 @@
 #include "..\CMUgraphicsLib\CMUgraphics.h"
 #include "..\Defs.h"
 
-#include "..\Enemies\Enemy.h"
+#include "../Enemies/Enemy.h"
+
 
 #include "..\Generic_DS\Queue.h"
 

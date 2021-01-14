@@ -60,10 +60,10 @@ const T* Stack<T>::toArray(int& count)
 {
 	count = 0;
 
-	if (!head)
+	if (!Top)
 		return nullptr;
 	//counting the no. of items in the Queue
-	Node<T>* p = head;
+	Node<T>* p = Top;
 	while (p)
 	{
 		count++;
@@ -72,7 +72,7 @@ const T* Stack<T>::toArray(int& count)
 
 
 	T* Arr = new T[count];
-	p = head;
+	p = Top;
 	for (int i = 0; i < count; i++)
 	{
 		Arr[i] = p->getItem();

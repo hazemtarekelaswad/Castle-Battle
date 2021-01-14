@@ -2,6 +2,7 @@
 #include <time.h>
 #include <cstdlib>
 
+#include "../Battle.h"
 //////////////////////////////////////////////////////////////////////////////////////////
 GUI::GUI()
 {
@@ -270,7 +271,29 @@ void GUI::AddToDrawingList(const Enemy* pE)
 	// IMPORTANT [TO DO]
 	// enemy type has been generated randomly here because enemy classes are not written yet
 	// in next phases, to know enemy type, you should apply dynamic_cast to pE pointer
-	int eType = pDitem->ID%ENMY_TYPE_CNT;	
+
+	int eType;
+
+
+	const Freezer* F = dynamic_cast<const Freezer*>(pE);
+	if (F != NULL)
+	{
+
+		eType = 2;
+	}
+	const Healer* H = dynamic_cast<const Healer*>(pE);
+	if (H != NULL)
+	{
+		eType = 1;
+	}
+	const Fighter* R = dynamic_cast<const Fighter*>(pE);
+	if (R != NULL)
+	{
+
+		eType = 0;
+	}
+
+	//int eType = pDitem->ID%ENMY_TYPE_CNT;	
 	pDitem->clr = DrawingColors[eType];
 	/////////////
 	/////////////

@@ -1,10 +1,16 @@
+//#include "../Defs.h"
 #include "Healer.h"
-#include "../Defs.h"
 #include <cmath>
 
 Healer::Healer(int id, int arrTime, double health, double power, int RL, int speed) 
 	: Enemy (id, arrTime, HEALER, health, power, RL, speed), isForward(true)
 {
+}
+
+Healer::Healer(int id, int arrTime)
+	: Enemy(id, arrTime), isForward(true)
+{
+	Enemy_Type = HEALER;
 }
 
 void Healer :: Act(Enemy * enemy, int currTimeStep)
@@ -41,18 +47,8 @@ void Healer :: Move()
 		if (isForward)
 			MoveForward();
 		else
-			SetDistance(Distance + (Health < 0.5 * OrgHealth ? 0.5 * Speed : Speed)); // Move Backward
+			SetDistance(Distance + (Health < 0.5 * OrgHealth ? 0.5 * (int)Speed : Speed)); // Move Backward
 	}
-
-}
-
-bool Healer :: Freezed()
-{
-
-}
-
-bool Healer :: Killed()
-{
 
 }
 

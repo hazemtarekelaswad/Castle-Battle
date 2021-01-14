@@ -1,5 +1,5 @@
-#include "Castle.h"
 #include<ctime>
+#include "Castle.h"
 
 Castle::Castle() {}
 
@@ -9,6 +9,12 @@ Castle::Castle(double h, int n, double p, double th)
 {
 	SetHealth(h);
 	SetPower(p);
+}
+
+Castle::Castle(double ch, int n, double cp) 
+	:MaxEnemies(n), OrgHealth(ch)
+{
+	SetPower(cp);
 }
 
 double Castle::GetOrgHealth() const {

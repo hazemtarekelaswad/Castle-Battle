@@ -40,12 +40,15 @@ void Battle::RunSimulation()
 	{
 	case MODE_INTR:
 		Interactive_Mode();
+		break;
 	case MODE_STEP:
 		Step_Mode();
+		break;
 	case MODE_SLNT:
 		Silent_Mode();
-	case MODE_DEMO:
-		Just_A_Demo();
+		break;
+	/*case MODE_DEMO:
+		Just_A_Demo();*/
 
 	}
 
@@ -57,8 +60,11 @@ void Battle::ReadFile() {
 	pGUI->PrintMessage("Please Enter The File Name");
 	string Filename = pGUI->GetString(); //file name to be input by the user
 	ifstream Input(Filename + ".txt");
-	int ch, n, cp;
+	double ch, cp;
+	int n;
 	Input >> ch >> n >> cp;		//castle health and maximum number of enemies hit
+	EnemyCount = n;
+	KilledCount = 0;
 	Castle pCastle(ch, n, cp);
 	this->BCastle = pCastle;
 	int enemyNumber;
@@ -71,7 +77,19 @@ void Battle::ReadFile() {
 	{
 		//for now we will get the id and arrival time
 		Input >> ID >> TYP >> AT >> H >> POW >> RLD >> SPD;
-		pE = new Enemy(ID, AT,TYP,H,POW,RLD,SPD); //add cases for each type
+
+		switch (TYP) {
+		case FIGHTER:
+			pE = new Fighter(ID, AT,H,POW,RLD,SPD); //add cases for each type
+			break;
+		case HEALER:
+			pE = new Healer(ID, AT, H, POW, RLD, SPD);
+			break;
+		case FREEZER:
+			pE = new Freezer(ID, AT, H, POW, RLD, SPD);
+			break;
+		}
+
 		if (H > 0) {
 
 			pE->SetStatus(INAC); //initiall all enemies are inactive
@@ -102,6 +120,13 @@ void Battle::Silent_Mode() {
 		UpdateFighters();
 
 	}
+	if (KilledCount >= EnemyCount)
+		gamestatus = "WIN";
+	else if (GetCastle()->GetHealth() <= 0)
+		gamestatus = "LOSE";
+	else
+		gamestatus = "DRAWN";
+
 }
 void Battle::Interactive_Mode() {
 	pGUI->PrintMessage("Welcome to Interactive Mode");
@@ -119,6 +144,13 @@ void Battle::Interactive_Mode() {
 		pGUI->UpdateInterface(CurrentTimeStep);
 		pGUI->waitForClick();
 	}
+
+	if (KilledCount >= EnemyCount)
+		gamestatus = "WIN";
+	else if (GetCastle()->GetHealth() <= 0)
+		gamestatus = "LOSE";
+	else
+		gamestatus = "DRAWN";
 }
 void Battle::Step_Mode() {
 	pGUI->PrintMessage("Welcome to Step Mode");
@@ -137,9 +169,16 @@ void Battle::Step_Mode() {
 		pGUI->UpdateInterface(CurrentTimeStep);
 		Sleep(1000);
 	}
+
+	if (KilledCount >= EnemyCount)
+		gamestatus = "WIN";
+	else if (GetCastle()->GetHealth() <= 0)
+		gamestatus = "LOSE";
+	else
+		gamestatus = "DRAWN";
 }
 
-
+/*
 //This is just a demo function for project introductory phase
 //It should be removed in phases 1&2
 void Battle::Just_A_Demo()
@@ -165,7 +204,17 @@ void Battle::Just_A_Demo()
 	for (int i = 0; i < EnemyCount; i++)
 	{
 		ArrivalTime += (rand() % 3);	//Randomize arrival time
-		pE = new Enemy(++Enemy_id, ArrivalTime);
+
+		// pE = new Enemy(++Enemy_id, ArrivalTime);
+		switch (TYP) {
+		case FIGHTER:
+			pE = new Fighter(++Enemy_id, ArrivalTime); //add cases for each type
+		case HEALER:
+			pE = new Healer(++Enemy_id, ArrivalTime);
+		case FREEZER:
+			pE = new Freezer(++Enemy_id, ArrivalTime);
+		}
+
 		pE->SetStatus(INAC); //initiall all enemies are inactive
 		Q_Inactive.enqueue(pE);		//Add created enemy to inactive Queue
 	}
@@ -188,6 +237,7 @@ void Battle::Just_A_Demo()
 		Sleep(250);
 	}
 }
+*/
 
 //Add enemy lists (inactive, active,.....) to drawing list to be displayed on user interface
 void Battle::AddAllListsToDrawingList()
@@ -200,7 +250,7 @@ void Battle::AddAllListsToDrawingList()
 
 	//Add other lists to drawing list
 	int ActiveFreezersCount;
-	Enemy* const * EnemyListActiveFreezers = Q_ActiveFreezers.toArray(ActiveFreezersCount);
+	Freezer* const * EnemyListActiveFreezers = Q_ActiveFreezers.toArray(ActiveFreezersCount);
 	for (int i = 0; i < ActiveFreezersCount; i++) {
 		pGUI->AddToDrawingList(EnemyListActiveFreezers[i]);
 	}
@@ -212,7 +262,7 @@ void Battle::AddAllListsToDrawingList()
 	}
 
 	int ActiveFightersCount;
-	Enemy* const * EnemyListActiveFighters = PQ_ActiveFighters.toArray(ActiveFightersCount);
+	Fighter* const * EnemyListActiveFighters = PQ_ActiveFighters.toArray(ActiveFightersCount);
 	for (int i = 0; i < ActiveFightersCount; i++) {
 		pGUI->AddToDrawingList(EnemyListActiveFighters[i]);
 	}
@@ -224,7 +274,7 @@ void Battle::AddAllListsToDrawingList()
 	}
 
 	int ActiveHealersCount;
-	Enemy* const * EnemyListHealers = S_ActiveHealers.toArray(ActiveHealersCount);
+	Healer* const * EnemyListHealers = S_ActiveHealers.toArray(ActiveHealersCount);
 	for (int i = 0; i < ActiveHealersCount; i++) {
 		pGUI->AddToDrawingList(EnemyListHealers[i]);
 	}
@@ -251,13 +301,13 @@ void Battle::ActivateEnemies()
 		switch (pE->GetType())		//add emeies to respective lists
 		{
 		case(FIGHTER):
-			PQ_ActiveFighters.enqueue(pE);
+			PQ_ActiveFighters.enqueuePriority(dynamic_cast<Fighter*>(pE)->GetPriFactor(), dynamic_cast<Fighter*>(pE));
 			break;
 		case(HEALER):
-			S_ActiveHealers.push(pE);
+			S_ActiveHealers.push(dynamic_cast<Healer*>(pE));
 			break;
 		case(FREEZER):
-			Q_ActiveFreezers.enqueue(pE);
+			Q_ActiveFreezers.enqueue(dynamic_cast<Freezer*>(pE));
 			break;
 		}
 	}
@@ -316,72 +366,128 @@ void Battle::Demo_UpdateEnemies()
 }
 
 void Battle::UpdateFighters() {
-	Fighter currentFighter(0,0,0,0,0,0);
+	Fighter* currentFighter;
 	Healer* currentHealer;
-	Freezer currentFreezer(0,0,0,0,0,0);
-	for (int i = 0; i < EnemyCount; i++) {
+	Freezer* currentFreezer;
+
+	//params to be printed
+	bool castleFrosted = false;
+	int activeFightersNum;
+	PQ_ActiveFighters.toArray(activeFightersNum);
+	int activeHealersNum;
+	S_ActiveHealers.toArray(activeHealersNum);
+	int activeFreezersNum;
+	Q_ActiveFreezers.toArray(activeFreezersNum);
+	int frostedFighters = 0;
+	int frostedHealers = 0;
+	int frostedFreezers = 0;
+	int killedFighters = 0;
+	int killedHealers = 0;
+	int killedFreezers = 0;
+
+	//for (int i = 0; i < EnemyCount; i++) {
 		PQ_ActiveFighters.peekFront(currentFighter);	//get the first enemy from each type
-		currentHealer = &(S_ActiveHealers.peek());
+		currentHealer = S_ActiveHealers.peek();
 		Q_ActiveFreezers.peekFront(currentFreezer);
 		//then the enemies should attack the castle
-		currentFighter.Act(GetCastle(), CurrentTimeStep);
-		currentFreezer.Act(GetCastle(), CurrentTimeStep);
+		currentFighter->Act(GetCastle(), CurrentTimeStep);
+		currentFreezer->Act(GetCastle(), CurrentTimeStep);
 		//then they must move forward
-		currentFighter.Move();
-		currentFreezer.Move();
+		currentFighter->Move();
+		currentFreezer->Move();
 		currentHealer->Move();
 		//if the health of anyone of them is less than the full health then the healer should heal them
-		if (currentFighter.GetHealth() < currentFighter.GetOrgHealth() || currentFreezer.GetHealth() < currentFreezer.GetOrgHealth()) {
-			if (currentFighter.GetDistance() - currentHealer->GetDistance() <= 2) {
-				currentHealer->Act(&currentFighter, CurrentTimeStep);
+		if (currentFighter->GetHealth() < currentFighter->GetOrgHealth() || currentFreezer->GetHealth() < currentFreezer->GetOrgHealth()) {
+			if (currentFighter->GetDistance() - currentHealer->GetDistance() <= 2) {
+				currentHealer->Act(currentFighter, CurrentTimeStep);
 			}
-			if (currentFreezer.GetDistance() - currentHealer->GetDistance() <= 2) {
-				currentHealer->Act(&currentFreezer, CurrentTimeStep);
+			if (currentFreezer->GetDistance() - currentHealer->GetDistance() <= 2) {
+				currentHealer->Act(currentFreezer, CurrentTimeStep);
 			}
 		}
 		//the castle should also attack enemies
-		this->GetCastle()->ShootBullets(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
-		this->GetCastle()->ShootIce(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+		this->GetCastle()->Act(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+		//this->GetCastle()->ShootBullets(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+	//	this->GetCastle()->ShootIce(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
 		//if the health of any of the enemies is less than then move him to the killed list
-		if (currentFighter.GetHealth() < 1) {
+
+		if (currentFighter->GetHealth() < 1) {
 			PQ_ActiveFighters.dequeue(currentFighter);
-			currentFighter.SetStatus(KILD);
-			Q_Killed.enqueue(&currentFighter);
+			currentFighter->SetStatus(KILD);
+			Q_Killed.enqueue(currentFighter);
 			KilledCount++;
+			--ActiveCount;
+			killedFighters++;
+			activeFightersNum--;
 		}
-		if (currentFreezer.GetHealth() < 1) {
-			PQ_Frozen.dequeue(currentFreezer);
-			currentFreezer.SetStatus(KILD);
-			Q_Killed.enqueue(&currentFreezer);
+		if (currentFreezer->GetHealth() < 1) {
+			Q_ActiveFreezers.dequeue(currentFreezer);
+			currentFreezer->SetStatus(KILD);
+			Q_Killed.enqueue(currentFreezer);
 			KilledCount++;
+			--ActiveCount;
+			killedFighters++;
+			activeFightersNum--;
 		}
 		if (currentHealer->GetHealth() < 1) {
 			S_ActiveHealers.pop(currentHealer);
 			currentHealer->SetStatus(KILD);
 			Q_Killed.enqueue(currentHealer);
 			KilledCount++;
+			--ActiveCount;
+			killedFighters++;
+			activeFightersNum--;
 		}
+
 		//check to see if any of the enemies is frozen
 		if (currentHealer->Freezed()) {
 			S_ActiveHealers.pop(currentHealer);
 			currentHealer->SetStatus(FRST);
-			PQ_Frozen.enqueue(currentHealer);
+			PQ_Frozen.enqueuePriority(100 - currentHealer->GetFreezeTime(), currentHealer);
 			FrostedCount++;
+			--ActiveCount;
+			frostedHealers++;
 		}
-		if (currentFreezer.Freezed()) {
+		if (currentFreezer->Freezed()) {
 			Q_ActiveFreezers.dequeue(currentFreezer);
-			currentFreezer.SetStatus(FRST);
-			PQ_Frozen.enqueue(&currentFreezer);
+			currentFreezer->SetStatus(FRST);
+			PQ_Frozen.enqueuePriority(100 - currentFreezer->GetFreezeTime(), currentFreezer);
 			FrostedCount++;
+			--ActiveCount;
+			frostedHealers++;
 		}
 		//then move the current time step forward
+		pGUI->UpdateStatusBar(CurrentTimeStep);
 		CurrentTimeStep++;
 		
+		if (GetCastle()->GetStatus() == 0) {
+			castleFrosted = false;
+		}
+		else {
+			castleFrosted = true;
+		}
+		PrintParams(GetCastle()->GetHealth(), castleFrosted, activeFightersNum, activeHealersNum, activeFreezersNum, frostedFighters, frostedHealers, frostedFreezers, killedFighters, killedHealers, killedFreezers);
 	
 	
-	}
+	//}
 }
 
+void Battle::PrintParams(int castleHealth, bool castleFrosted, int activeFightersNum, int activeHealersNum, int activeFreezersNum, int	frostedFighters, int frostedHealers, int frostedFreezers, int killedFighters, int killedHealers, int killedFreezers) {
+	castleHealth;
+	castleFrosted;
+	activeHealersNum;
+	activeFreezersNum;
+	activeFightersNum;
+	int totalActiveCount = activeFightersNum + activeFreezersNum + activeHealersNum;
+	frostedFighters;
+	frostedFreezers;
+	frostedHealers;
+	int totalFrosted = frostedFighters + frostedFreezers + frostedHealers;
+	killedFighters;
+	killedFreezers;
+	killedHealers;
+	int totalKilled = killedFighters + killedFreezers + killedHealers;
+}
 
 void Battle::OutputFile()
 {
@@ -399,10 +505,10 @@ void Battle::OutputFile()
 	int totalFD = 0;
 	int totalKD = 0;
 
-	while (!KilledEnemies.isEmpty())
+	while (!Q_Killed.isEmpty())
 	{
 		Enemy* killed_enemy;
-		KilledEnemies.dequeue(killed_enemy);
+		Q_Killed.dequeue(killed_enemy);
 		enemy_id = killed_enemy->GetID();
 		enemyKDS = killed_enemy->GetEnemyKilledTime();
 		enemyFD = killed_enemy->GetFirstShotDelay();

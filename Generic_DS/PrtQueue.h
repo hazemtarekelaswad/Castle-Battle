@@ -99,11 +99,11 @@ bool PrtQueue<T>:: peekFront(T& frntEntry) const
 template <typename T>
 PrtQueue<T>::~PrtQueue()
 {
-	int x;
+	/*int x;
 		while (!isEmpty())
 		{
 			dequeue(x);
-		}
+		}*/
 }
 
 template <typename T>

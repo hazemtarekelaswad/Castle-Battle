@@ -1,3 +1,4 @@
+#include "../Castle/Castle.h"
 #include "Freezer.h"
 #include "../Defs.h"
 #include <cmath>
@@ -5,6 +6,12 @@
 Freezer::Freezer(int id, int arrTime, double health, double power, int RL, int speed) 
 	: Enemy (id, arrTime, FREEZER, health, power, RL, speed)
 {
+}
+
+Freezer::Freezer(int id, int arrTime)
+	: Enemy(id, arrTime)
+{
+	Enemy_Type = FREEZER;
 }
 
 void Freezer :: Act(Castle * castle, int currTimeStep)
@@ -28,16 +35,6 @@ void Freezer :: Move()
 {
 	if (status == ACTV)
 		MoveForward();
-
-}
-
-bool Freezer :: Freezed()
-{
-
-}
-
-bool Freezer :: Killed()
-{
 
 }
 

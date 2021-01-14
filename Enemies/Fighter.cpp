@@ -1,10 +1,18 @@
 #include "Fighter.h"
-#include "../Defs.h"
+#include "../Castle/Castle.h"
+//#include "../Defs.h"
 
 
 Fighter::Fighter(int id, int arrTime, double health, double power, int RL, int speed) 
 	: Enemy (id, arrTime, FIGHTER, health, power, RL, speed)
 {
+	priFactor = (status == ACTV ? 2 : 1) * Power * Health / Distance;
+}
+
+Fighter::Fighter(int id, int arrTime) 
+	: Enemy(id, arrTime)
+{
+	Enemy_Type = FIGHTER;
 	priFactor = (status == ACTV ? 2 : 1) * Power * Health / Distance;
 }
 

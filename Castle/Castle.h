@@ -3,9 +3,11 @@
 #include "..\Generic_DS\PrtQueue.h"
 #include "..\Generic_DS\Stack.h"
 #include "..\Generic_DS\Queue.h"
-#include "..\Enemies\Fighter.h"
+
 #include "..\Enemies\Healer.h"
 #include "..\Enemies\Freezer.h"
+#include "..\Enemies\Fighter.h"
+
 
 class Castle
 {
@@ -21,6 +23,7 @@ class Castle
 
 public:
 	Castle();
+	Castle(double ch, int n, double cp);
 	Castle(double h, int n, double p, double th);
 
 	void SetHealth(double h);

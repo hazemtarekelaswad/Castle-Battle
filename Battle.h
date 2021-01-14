@@ -1,14 +1,12 @@
 #pragma once
-
-#include "Enemies\Enemy.h"
-#include "Castle\Castle.h"
-#include "Generic_DS\Queue.h"
+#include <string>
 #include "GUI\GUI.h"
+#include "Castle\Castle.h"
+#include "Enemies\Enemy.h"
+#include "Generic_DS\Queue.h"
 #include "Generic_DS/PriorityQ.h"
 #include "Generic_DS/Stack.h"
-#include "Enemies/Healer.h"
-#include "Enemies/Fighter.h"
-#include "Enemies/Freezer.h"
+
 
 // it is the controller of the project
 class Battle
@@ -30,8 +28,8 @@ private:
 
 	Queue<Freezer *> Q_ActiveFreezers;	//queue for active freezers
 	Queue<Enemy*> Q_Killed;		//queue for killed enemies
-	PriorityQ<Fighter*> PQ_ActiveFighters; //priorityQ for active fighters
-	PriorityQ<Enemy*> PQ_Frozen;		//priorityQ for frozen enemies
+	PrtQueue<Fighter*> PQ_ActiveFighters; //priorityQ for active fighters
+	PrtQueue<Enemy*> PQ_Frozen;		//priorityQ for frozen enemies
 	Stack<Healer*> S_ActiveHealers; //stack for active healers
 
 
@@ -42,8 +40,7 @@ private:
 	Enemy* DemoList[MaxEnemyCount];	//Important: This is just for demo
 	/// ==>
 
-
-	//
+	string gamestatus;				//The state of the game whether WIN, LOSS and DRAWN
 	// TODO: Add More Data Members As Needed
 	//
 
@@ -57,7 +54,7 @@ public:
 
 
 	void AddtoDemoList(Enemy* Ptr);		//Add Enemy to the demo queue of enemies (for demo purposes only)
-	void Just_A_Demo();	//just to show a demo and should be removed in phase1 1 & 2
+	//void Just_A_Demo();	//just to show a demo and should be removed in phase1 1 & 2
 	void Demo_UpdateEnemies();	//Randomly update enemies distance/status (for demo purposes)
 	void UpdateFighters();
 	//
@@ -69,5 +66,7 @@ public:
 	void Interactive_Mode();
 	void Silent_Mode();
 	void Step_Mode();
+
+	void PrintParams(int, bool, int, int, int, int, int, int, int, int, int);
 };
 

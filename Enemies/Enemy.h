@@ -2,8 +2,10 @@
 
 #include "..\Defs.h"
 #include "..\CMUgraphicsLib\CMUgraphics.h"
-#include "../Castle/Castle.h"
-
+#include "..\Generic_DS\Queue.h"
+#include <fstream>
+#include <iostream>
+class Castle;
 class GUI;
 // Enemy is the base class of each type of enemy
 // Enemy should be an abstract class in next phases

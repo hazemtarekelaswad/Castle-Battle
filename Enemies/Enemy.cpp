@@ -1,6 +1,6 @@
-#include "Enemy.h"
 #include <cmath>
-
+#include "..\Castle\Castle.h"
+#include "Enemy.h"
 
 Enemy::Enemy(int id, int arrTime, int d) : ID(id),ArrvTime(arrTime), OrgHealth(Health)
 {   
@@ -22,6 +22,7 @@ Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL,
 	KillDelay = 0;
 	LifeTime = FirstShotDelay + KillDelay;
 	FrstTimeFrosted = -1;
+
 	FreezeTime = std::ceil((Enemy_Type == FIGHTER ? 100 : 150) / (Power * Distance)); // is to be changed
 }
 
@@ -228,7 +229,7 @@ int Enemy ::  GetFirstShotTime() const
 
 bool Enemy :: Freezed()
 {
-	if (FreezeTime > 0 || GetStatus() == FRST)
+	if (GetStatus() == FRST)
 		return true;
 	return false;
 }
