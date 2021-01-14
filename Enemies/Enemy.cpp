@@ -12,7 +12,6 @@ Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL,
 	Enemy_Type = type;
 	SetHealth (H);
 	SetPower(P);
-	SetFreezeTime(0);
 	SetReloadTime(RL);
 	SetSpeed(s);
 
@@ -21,7 +20,8 @@ Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL,
 	EnemyKilledTime = -1;
 	KillDelay = 0;
 	LifeTime = FirstShotDelay + KillDelay;
-
+	FrstTimeFrst;
+	FreezeTime = (Enemy_Type == FIGHTER ? 180 : 200) / (Power * Distance); // is to be changed
 }
 
 Enemy::~Enemy()
@@ -110,6 +110,10 @@ void Enemy::SetFreezeTime(int t) {
 	FreezeTime = t;
 }
 
+void Enemy::SetFrstTimeFrst(int t) {
+	FrstTimeFrst = t;
+}
+
 void Enemy :: SetReloadTime(int RL)
 {
 	if (RL > 0)
@@ -184,6 +188,10 @@ double Enemy :: GetPower() const
 
 int Enemy::GetFreezeTime() const {
 	return FreezeTime;
+}
+
+int Enemy::GetFrstTimeFrst() const {
+	return FrstTimeFrst;
 }
 
 int Enemy ::  GetReloadTime() const

@@ -31,6 +31,8 @@ protected:
 
 	int FreezeTime;
 
+	int FrstTimeFrst;
+
 	int ReloadTime;
 
 	int FirstShotDelay;
@@ -65,6 +67,8 @@ public:
 
 	void SetFreezeTime(int t);
 
+	void SetFrstTimeFrst(int t);
+
 	void SetReloadTime(int RL);
 
 	void SetFirstShotDelay(int FSD);
@@ -91,6 +95,8 @@ public:
 	double GetPower() const;
 
 	int GetFreezeTime() const;
+
+	int GetFrstTimeFrst() const;
 
 	int GetReloadTime() const;
     
