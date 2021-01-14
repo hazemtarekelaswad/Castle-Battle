@@ -1,22 +1,26 @@
 #include "Castle.h"
 
-Castle::Castle(double h, int n, double p, double th) 
-	: MaxEnemies(n), Threshold(th), IceAmount(0) {
-	SetHealth(n);
+Castle::Castle() {}
+
+Castle::Castle(double h, int n, double p, double th)
+	: MaxEnemies(n), Threshold(th), IceAmount(0)
+{
+	SetHealth(h);
 	SetPower(p);
 }
 
-
-
 void Castle::SetHealth(double h)
 {
-	if(h > 0)
+	if (h > 0)
 		Health = h;
 	else
 		Health = 0; // killed
 }
 void Castle::SetMaxEnemies(int n) {
-	MaxEnemies = n;
+	if (n > 0)
+		MaxEnemies = n;
+	else
+		MaxEnemies = 0;
 }
 
 void Castle::SetPower(double p) {
@@ -30,7 +34,7 @@ void Castle::SetThreshold(double th) {
 void Castle::SetStatus(CSL_STATUS stat) {
 	status = stat;
 }
-void Castle::SetIceAmount(int amount) {
+void Castle::SetIceAmount(double amount) {
 	IceAmount = amount;
 }
 
@@ -50,6 +54,94 @@ double Castle::GetThreshold() const {
 CSL_STATUS Castle::GetStatus() const {
 	return status;
 }
-int Castle::GetIceAmount() const {
+double Castle::GetIceAmount() const {
 	return IceAmount;
+}
+
+
+
+void Castle::ShootBullets(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep) {
+
+	if (status == CSL_FRST)
+		return;
+
+	Queue<Fighter*> tempFighters;
+	Stack<Healer*> tempHealers;
+	Queue<Freezer*> tempFreezers;
+
+	for (int i = 0; i < MaxEnemies; ++i) {
+		if (!fightersQ.isEmpty()) {
+			Fighter* fighterPtr;
+			fightersQ.dequeue(fighterPtr);
+			fighterPtr->SetHealth(fighterPtr->GetHealth() - (Power / fighterPtr->GetDistance()));
+			tempFighters.enqueue(fighterPtr);
+
+			if (fighterPtr->GetFirstShotTime() == -1) {
+				fighterPtr->SetFirstShotTime(currTimeStep);
+				fighterPtr->SetFirstShotDelay(currTimeStep - fighterPtr->GetArrvTime());
+			}
+
+			if (fighterPtr->GetHealth() == 0) {
+				fighterPtr->SetEnemyKilledTime(currTimeStep);
+				fighterPtr->SetKillDelay(currTimeStep - fighterPtr->GetFirstShotTime());
+			}
+		}
+		else if (!healersStack.isEmpty()) {
+			Healer* healerPtr;
+			healersStack.pop(healerPtr);
+			healerPtr->SetHealth(healerPtr->GetHealth() - (0.5 * Power / healerPtr->GetDistance()));
+			if (healerPtr->GetDistance() <= 5 && healerPtr->GetHealth() == 0)
+				Health *= 1.03;
+			tempHealers.push(healerPtr);
+
+			if (healerPtr->GetFirstShotTime() == -1) {
+				healerPtr->SetFirstShotTime(currTimeStep);
+				healerPtr->SetFirstShotDelay(currTimeStep - healerPtr->GetArrvTime());
+			}
+
+			if (healerPtr->GetHealth() == 0) {
+				healerPtr->SetEnemyKilledTime(currTimeStep);
+				healerPtr->SetKillDelay(currTimeStep - healerPtr->GetFirstShotTime());
+			}
+		}
+		else if (!freezersQ.isEmpty()) {
+			Freezer* freezerPtr;
+			freezersQ.dequeue(freezerPtr);
+			freezerPtr->SetHealth(freezerPtr->GetHealth() - (Power / freezerPtr->GetDistance()));
+			tempFreezers.enqueue(freezerPtr);
+
+			if (freezerPtr->GetFirstShotTime() == -1) {
+				freezerPtr->SetFirstShotTime(currTimeStep);
+				freezerPtr->SetFirstShotDelay(currTimeStep - freezerPtr->GetArrvTime());
+			}
+
+			if (freezerPtr->GetHealth() == 0) {
+				freezerPtr->SetEnemyKilledTime(currTimeStep);
+				freezerPtr->SetKillDelay(currTimeStep - freezerPtr->GetFirstShotTime());
+			}
+		}
+		else
+			break;
+	}
+
+
+	for (int i = 0; i < MaxEnemies; ++i) {
+		if (!tempFighters.isEmpty()) {
+			Fighter* ptr;
+			tempFighters.dequeue(ptr);
+			fightersQ.enqueuePriority(ptr->GetPriFactor(), ptr);
+		}
+		else if (!tempHealers.isEmpty()) {
+			Healer* healerPtr;
+			tempHealers.pop(healerPtr);
+			healersStack.push(healerPtr);
+		}
+		else if (!tempFreezers.isEmpty()) {
+			Freezer* freezerPtr;
+			tempFreezers.dequeue(freezerPtr);
+			freezersQ.enqueue(freezerPtr);
+		}
+		else
+			break;
+	}
 }

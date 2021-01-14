@@ -4,6 +4,7 @@
 class Fighter : public Enemy
 {
 	GUI* pGUI;
+	int priFactor;
 
 public:
 	Fighter(int id,int arrTime, double health, double power, int RL, int speed);
@@ -11,6 +12,8 @@ public:
 	void Act(Castle* castle, int currTimeStep);
 
 	void Move() override;
+
+	int GetPriFactor() const;
 
 	~Fighter(void);
 };

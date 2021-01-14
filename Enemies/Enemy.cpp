@@ -12,13 +12,16 @@ Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL,
 	Enemy_Type = type;
 	SetHealth (H);
 	SetPower(P);
+	SetFreezeTime(0);
 	SetReloadTime(RL);
 	SetSpeed(s);
 
+	FirstShotTime = -1;		// to indicate that it has not shot yet
 	FirstShotDelay = 0;
+	EnemyKilledTime = -1;
 	KillDelay = 0;
-	LifeTime = 0;
-	EnemyKilledTime = 0;
+	LifeTime = FirstShotDelay + KillDelay;
+
 }
 
 Enemy::~Enemy()
@@ -79,7 +82,10 @@ int Enemy::GetArrvTime() const
 
 void Enemy :: SetHealth(double H)
 {
-	Health = H;
+	if (H <= 0)
+		Health = 0;
+	else
+		Health = H;
 }
 
 
@@ -98,6 +104,10 @@ void Enemy ::  SetPower(double P)
 
 	else 
 		Power = 0;
+}
+
+void Enemy::SetFreezeTime(int t) {
+	FreezeTime = t;
 }
 
 void Enemy :: SetReloadTime(int RL)
@@ -138,7 +148,7 @@ void Enemy :: SetLifeTime(int LT)
 void Enemy :: SetEnemyKilledTime(int KT)
 {
 	if (KT > 0)
-	EnemyKilledTime = KT;
+		EnemyKilledTime = KT;
 
 	else 
 		EnemyKilledTime =0;
@@ -149,6 +159,8 @@ void Enemy :: SetFirstShotTime(int FST)
 {
 	FirstShotTime = FST;
 }
+
+// ----------------------------------------------------------
 
 double Enemy :: GetHealth () const
 {
@@ -168,6 +180,10 @@ double Enemy :: GetSpeed() const
 double Enemy :: GetPower() const
 {
 	return Power;
+}
+
+int Enemy::GetFreezeTime() const {
+	return FreezeTime;
 }
 
 int Enemy ::  GetReloadTime() const

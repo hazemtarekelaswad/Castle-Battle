@@ -140,6 +140,15 @@
     <ClCompile Include="Castle\Castle.cpp">
       <Filter>Castle</Filter>
     </ClCompile>
+    <ClCompile Include="Enemies\Fighter.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Freezer.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Healer.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -220,6 +229,24 @@
       <Filter>Castle</Filter>
     </ClInclude>
     <ClInclude Include="Generic_DS\PriorityQ.h">
+      <Filter>Generic_DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Fighter.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Freezer.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Healer.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Generic_DS\Stack.h">
+      <Filter>Generic_DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Generic_DS\PrtQueue.h">
+      <Filter>Generic_DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Generic_DS\PrtNode.h">
       <Filter>Generic_DS</Filter>
     </ClInclude>
   </ItemGroup>

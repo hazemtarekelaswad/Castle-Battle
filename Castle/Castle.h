@@ -1,5 +1,12 @@
 #pragma once
 #include "..\Defs.h"
+#include "..\Generic_DS\PrtQueue.h"
+#include "..\Generic_DS\Stack.h"
+#include "..\Generic_DS\Queue.h"
+#include "..\Enemies\Fighter.h"
+#include "..\Enemies\Healer.h"
+#include "..\Enemies\Freezer.h"
+
 class Castle
 {
 	double Health;
@@ -8,8 +15,10 @@ class Castle
 	double Threshold;
 	CSL_STATUS status;
 	double IceAmount;
+	bool IsShot;
 
 public:
+	Castle();
 	Castle(double h, int n, double p, double th);
 
 	void SetHealth(double h);
@@ -26,7 +35,7 @@ public:
 	CSL_STATUS GetStatus() const;
 	double GetIceAmount() const;
 
-	void Act();
+	void ShootBullets(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep);
 
 };
 

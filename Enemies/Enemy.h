@@ -37,16 +37,13 @@ protected:
 	
 	int FirstShotTime;
 	
+	int EnemyKilledTime;
+
 	int KillDelay;
 	
 	int LifeTime;
 	
-	int EnemyKilledTime;
-	
-	int N; // No. of Enemies to be served by the castle
-
 	ENMY_TYPE Enemy_Type; // Type of the enemy (Fighter, Healer, Freezer)
-
 
 public:
 	Enemy(int id, int arrTime, int d = MaxDistance);
@@ -66,6 +63,8 @@ public:
 
 	void SetPower(double P);
 
+	void SetFreezeTime(int t);
+
 	void SetReloadTime(int RL);
 
 	void SetFirstShotDelay(int FSD);
@@ -77,6 +76,7 @@ public:
 	void SetEnemyKilledTime(int KT);
 
 	void SetFirstShotTime(int FST);
+
 // -----------------------------------------------------------
 	int GetDistance() const;
 	
@@ -89,6 +89,8 @@ public:
 	double GetSpeed() const;
 	
 	double GetPower() const;
+
+	int GetFreezeTime() const;
 
 	int GetReloadTime() const;
     
@@ -106,6 +108,7 @@ public:
 	
 	ENMY_STATUS GetStatus() const;
 
+
 	void MoveForward();
 
 	virtual void Move() = 0;	
@@ -114,7 +117,6 @@ public:
 
 	bool Killed();
 
-	virtual void Act(Castle*,int) = 0;		//to be implemented in child classes
 	ENMY_TYPE GetType() const;
 };
 

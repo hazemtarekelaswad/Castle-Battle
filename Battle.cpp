@@ -97,7 +97,7 @@ void Battle::Interactive_Mode() {
 	pGUI->PrintMessage("Welcome to Interactive Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount && this->GetCastle->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
@@ -114,7 +114,7 @@ void Battle::Step_Mode() {
 	pGUI->PrintMessage("Welcome to Step Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount && this->GetCastle->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
