@@ -60,6 +60,7 @@ void Battle::ReadFile() {
 	pGUI->PrintMessage("Please Enter The File Name");
 	string Filename = pGUI->GetString(); //file name to be input by the user
 	ifstream Input(Filename + ".txt");
+
 	double ch, cp;
 	int n;
 	Input >> ch >> n >> cp;		//castle health and maximum number of enemies hit
@@ -286,6 +287,10 @@ void Battle::AddAllListsToDrawingList()
 		pGUI->AddToDrawingList(DemoList[i]);*/
 }
 
+
+
+
+
 //check the inactive list and activate all enemies that has arrived
 void Battle::ActivateEnemies()
 {
@@ -372,12 +377,14 @@ void Battle::UpdateFighters() {
 
 	//params to be printed
 	bool castleFrosted = false;
+
 	int activeFightersNum;
 	PQ_ActiveFighters.toArray(activeFightersNum);
 	int activeHealersNum;
 	S_ActiveHealers.toArray(activeHealersNum);
 	int activeFreezersNum;
 	Q_ActiveFreezers.toArray(activeFreezersNum);
+
 	int frostedFighters = 0;
 	int frostedHealers = 0;
 	int frostedFreezers = 0;
@@ -416,7 +423,9 @@ void Battle::UpdateFighters() {
 			currentFighter->SetStatus(KILD);
 			Q_Killed.enqueue(currentFighter);
 			KilledCount++;
+
 			--ActiveCount;
+
 			killedFighters++;
 			activeFightersNum--;
 		}
@@ -425,18 +434,22 @@ void Battle::UpdateFighters() {
 			currentFreezer->SetStatus(KILD);
 			Q_Killed.enqueue(currentFreezer);
 			KilledCount++;
+
 			--ActiveCount;
 			killedFighters++;
 			activeFightersNum--;
+
 		}
 		if (currentHealer->GetHealth() < 1) {
 			S_ActiveHealers.pop(currentHealer);
 			currentHealer->SetStatus(KILD);
 			Q_Killed.enqueue(currentHealer);
 			KilledCount++;
+
 			--ActiveCount;
 			killedFighters++;
 			activeFightersNum--;
+
 		}
 
 		//check to see if any of the enemies is frozen
@@ -445,7 +458,9 @@ void Battle::UpdateFighters() {
 			currentHealer->SetStatus(FRST);
 			PQ_Frozen.enqueuePriority(100 - currentHealer->GetFreezeTime(), currentHealer);
 			FrostedCount++;
+
 			--ActiveCount;
+
 			frostedHealers++;
 		}
 		if (currentFreezer->Freezed()) {
@@ -453,8 +468,10 @@ void Battle::UpdateFighters() {
 			currentFreezer->SetStatus(FRST);
 			PQ_Frozen.enqueuePriority(100 - currentFreezer->GetFreezeTime(), currentFreezer);
 			FrostedCount++;
+
 			--ActiveCount;
 			frostedHealers++;
+
 		}
 		//then move the current time step forward
 		pGUI->UpdateStatusBar(CurrentTimeStep);
