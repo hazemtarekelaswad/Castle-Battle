@@ -69,5 +69,7 @@ public:
 	void Interactive_Mode();
 	void Silent_Mode();
 	void Step_Mode();
+
+	void PrintParams(int,bool,int,int,int,int,int,int,int,int,int);
 };
 

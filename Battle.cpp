@@ -57,7 +57,8 @@ void Battle::ReadFile() {
 	pGUI->PrintMessage("Please Enter The File Name");
 	string Filename = pGUI->GetString(); //file name to be input by the user
 	ifstream Input(Filename + ".txt");
-	int ch, n, cp;
+	double ch;
+	int n, cp;
 	Input >> ch >> n >> cp;		//castle health and maximum number of enemies hit
 	Castle pCastle(ch, n, cp);
 	this->BCastle = pCastle;
@@ -236,6 +237,10 @@ void Battle::AddAllListsToDrawingList()
 		pGUI->AddToDrawingList(DemoList[i]);*/
 }
 
+
+
+
+
 //check the inactive list and activate all enemies that has arrived
 void Battle::ActivateEnemies()
 {
@@ -319,6 +324,22 @@ void Battle::UpdateFighters() {
 	Fighter currentFighter(0,0,0,0,0,0);
 	Healer* currentHealer;
 	Freezer currentFreezer(0,0,0,0,0,0);
+	//params to be printed
+	bool castleFrosted=false;
+	int activeFightersNum;
+	PQ_ActiveFighters.toArray(activeFightersNum);
+	int activeHealersNum;
+	S_ActiveHealers.toArray(activeHealersNum);
+	int activeFreezersNum;
+	Q_ActiveFreezers.toArray(activeFreezersNum);
+	int frostedFighters=0;
+	int frostedHealers=0;
+	int frostedFreezers=0;
+	int killedFighters=0;
+	int killedHealers=0;
+	int killedFreezers=0;
+
+
 	for (int i = 0; i < EnemyCount; i++) {
 		PQ_ActiveFighters.peekFront(currentFighter);	//get the first enemy from each type
 		currentHealer = &(S_ActiveHealers.peek());
@@ -348,18 +369,24 @@ void Battle::UpdateFighters() {
 			currentFighter.SetStatus(KILD);
 			Q_Killed.enqueue(&currentFighter);
 			KilledCount++;
+			killedFighters++;
+			activeFightersNum--;
 		}
 		if (currentFreezer.GetHealth() < 1) {
 			PQ_Frozen.dequeue(currentFreezer);
 			currentFreezer.SetStatus(KILD);
 			Q_Killed.enqueue(&currentFreezer);
 			KilledCount++;
+			killedFreezers++;
+			activeFreezersNum--;
 		}
 		if (currentHealer->GetHealth() < 1) {
 			S_ActiveHealers.pop(currentHealer);
 			currentHealer->SetStatus(KILD);
 			Q_Killed.enqueue(currentHealer);
 			KilledCount++;
+			killedHealers++;
+			activeHealersNum--;
 		}
 		//check to see if any of the enemies is frozen
 		if (currentHealer->Freezed()) {
@@ -367,17 +394,25 @@ void Battle::UpdateFighters() {
 			currentHealer->SetStatus(FRST);
 			PQ_Frozen.enqueue(currentHealer);
 			FrostedCount++;
+			frostedHealers++;
 		}
 		if (currentFreezer.Freezed()) {
 			Q_ActiveFreezers.dequeue(currentFreezer);
 			currentFreezer.SetStatus(FRST);
 			PQ_Frozen.enqueue(&currentFreezer);
 			FrostedCount++;
+			frostedFreezers++;
 		}
 		//then move the current time step forward
+		pGUI->UpdateStatusBar(CurrentTimeStep);
 		CurrentTimeStep++;
-		
-	
+		if (GetCastle()->GetStatus() == 0) {
+			castleFrosted = false;
+		}
+		else {
+			castleFrosted = true;
+		}
+		PrintParams(GetCastle()->GetHealth(), castleFrosted, activeFightersNum, activeHealersNum, activeFreezersNum, frostedFighters, frostedHealers, frostedFreezers, killedFighters, killedHealers, killedFreezers);
 	
 	}
 }
@@ -437,4 +472,21 @@ void Battle::OutputFile()
 	out << "Average Kill Delay = " << average_KD << endl;
 	out.close();
 
+}
+
+void Battle::PrintParams(int castleHealth,bool castleFrosted, int activeFightersNum, int activeHealersNum,int activeFreezersNum,int frostedFighters,int frostedHealers,int frostedFreezers,int killedFighters,int killedHealers,int killedFreezers) {
+	castleHealth;
+	castleFrosted;
+	activeHealersNum;
+	activeFreezersNum;
+	activeFightersNum;
+	int totalActiveCount = activeFightersNum + activeFreezersNum + activeHealersNum;
+	frostedFighters;
+	frostedFreezers;
+	frostedHealers;
+	int totalFrosted = frostedFighters + frostedFreezers + frostedHealers;
+	killedFighters;
+	killedFreezers;
+	killedHealers;
+	int totalKilled = killedFighters + killedFreezers + killedHealers;
 }
