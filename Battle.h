@@ -64,7 +64,7 @@ public:
 	// TODO: Add More Member Functions As Needed
 	//
 	void ReadFile(); //to read the input file
-
+	void OutputFile(); //Function to write output file
 	//game modes
 	void Interactive_Mode();
 	void Silent_Mode();

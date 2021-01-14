@@ -92,6 +92,16 @@ void Battle::ReadFile() {
 void Battle::Silent_Mode() {
 	pGUI->PrintMessage("Welcome to Silent Mode");
 	pGUI->waitForClick();
+	this->ReadFile();
+	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
+	{
+		CurrentTimeStep++;
+		ActivateEnemies();
+
+		//update enemies here
+		UpdateFighters();
+
+	}
 }
 void Battle::Interactive_Mode() {
 	pGUI->PrintMessage("Welcome to Interactive Mode");
@@ -103,7 +113,7 @@ void Battle::Interactive_Mode() {
 		ActivateEnemies();
 
 		//update enemies here
-
+		UpdateFighters();
 		pGUI->ResetDrawingList();
 		AddAllListsToDrawingList();
 		pGUI->UpdateInterface(CurrentTimeStep);
@@ -120,6 +130,7 @@ void Battle::Step_Mode() {
 		ActivateEnemies();
 
 		//update enemies here
+		UpdateFighters();
 
 		pGUI->ResetDrawingList();
 		AddAllListsToDrawingList();
@@ -369,4 +380,61 @@ void Battle::UpdateFighters() {
 	
 	
 	}
+}
+
+
+void Battle::OutputFile()
+{
+	ofstream out("Outputfile.txt");
+
+
+	out << "Game is " + gamestatus << endl;
+	out << "KTS\tID\tFD\tKD\tLT" << endl;
+
+	int enemy_id;
+	int enemyKDS;
+	int enemyFD;
+	int enemyKD;
+	int enemyLT;
+	int totalFD = 0;
+	int totalKD = 0;
+
+	while (!KilledEnemies.isEmpty())
+	{
+		Enemy* killed_enemy;
+		KilledEnemies.dequeue(killed_enemy);
+		enemy_id = killed_enemy->GetID();
+		enemyKDS = killed_enemy->GetEnemyKilledTime();
+		enemyFD = killed_enemy->GetFirstShotDelay();
+		enemyKD = killed_enemy->GetKillDelay();
+		enemyLT = killed_enemy->GetLifeTime();
+		totalFD += enemyFD;
+		totalKD += enemyKD;
+
+		out << enemyKDS << "\t" << enemy_id << "\t" << enemyFD << "\t" << enemyKD << "\t" << enemyLT << endl;
+
+
+
+	}
+
+	//////////////////////////We have to print Castle Total Damage here/////////////////////////////////
+
+	double average_FD = (double)totalFD / EnemyCount;
+	double average_KD = (double)totalKD / EnemyCount;
+
+	if (gamestatus == "WIN")
+	{
+		out << "Total Enemies = " << EnemyCount << endl;
+
+	}
+	else
+	{
+		out << "Killed Enemies = " << KilledCount << endl;
+		out << "Alive Enemies = " << EnemyCount - KilledCount << endl;
+	}
+
+	out << "Average First-Shot Delay = " << average_FD << endl;
+	out << "Average Kill Delay = " << average_KD << endl;
+	out.close();
+
 }
