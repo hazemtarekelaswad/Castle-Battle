@@ -71,7 +71,7 @@ void Battle::ReadFile() {
 	{
 		//for now we will get the id and arrival time
 		Input >> ID >> TYP >> AT >> H >> POW >> RLD >> SPD;
-		pE = new Enemy(ID, AT,TYP,H,POW,RLD,SPD);
+		pE = new Enemy(ID, AT,TYP,H,POW,RLD,SPD); //add cases for each type
 		if (H > 0) {
 
 			pE->SetStatus(INAC); //initiall all enemies are inactive
@@ -309,27 +309,64 @@ void Battle::UpdateFighters() {
 	Healer* currentHealer;
 	Freezer currentFreezer(0,0,0,0,0,0);
 	for (int i = 0; i < EnemyCount; i++) {
-		PQ_ActiveFighters.peekFront(currentFighter);
+		PQ_ActiveFighters.peekFront(currentFighter);	//get the first enemy from each type
 		currentHealer = &(S_ActiveHealers.peek());
 		Q_ActiveFreezers.peekFront(currentFreezer);
-
-
-
-		pE->DecrementDist();	//move to the castle
-		pE->Act(this->GetCastle(), CurrentTimeStep);		//attack the castle
-		this->GetCastle()->Act();		//the castle should also hit the enemies
-		if (pE->GetHealth() < 1) {	//if the enemy is killed move the enemy to the killed list
-			if (PQ_ActiveFighters.dequeue(pE)) {
-				//if the enemy is dequeued succesfully from the fighters list
-				//move him to the killed list
-				pE->SetStatus(KILD);
-				Q_Killed.enqueue(pE);
+		//then the enemies should attack the castle
+		currentFighter.Act(GetCastle(), CurrentTimeStep);
+		currentFreezer.Act(GetCastle(), CurrentTimeStep);
+		//then they must move forward
+		currentFighter.Move();
+		currentFreezer.Move();
+		currentHealer->Move();
+		//if the health of anyone of them is less than the full health then the healer should heal them
+		if (currentFighter.GetHealth() < currentFighter.GetOrgHealth() || currentFreezer.GetHealth() < currentFreezer.GetOrgHealth()) {
+			if (currentFighter.GetDistance() - currentHealer->GetDistance() <= 2) {
+				currentHealer->Act(&currentFighter, CurrentTimeStep);
 			}
-			else {
-				pGUI->PrintMessage("Something went wrong when killing enemy");
-				break;
+			if (currentFreezer.GetDistance() - currentHealer->GetDistance() <= 2) {
+				currentHealer->Act(&currentFreezer, CurrentTimeStep);
 			}
 		}
+		//the castle should also attack enemies
+		this->GetCastle()->ShootBullets(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+		this->GetCastle()->ShootIce(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+		//if the health of any of the enemies is less than then move him to the killed list
+		if (currentFighter.GetHealth() < 1) {
+			PQ_ActiveFighters.dequeue(currentFighter);
+			currentFighter.SetStatus(KILD);
+			Q_Killed.enqueue(&currentFighter);
+			KilledCount++;
+		}
+		if (currentFreezer.GetHealth() < 1) {
+			PQ_Frozen.dequeue(currentFreezer);
+			currentFreezer.SetStatus(KILD);
+			Q_Killed.enqueue(&currentFreezer);
+			KilledCount++;
+		}
+		if (currentHealer->GetHealth() < 1) {
+			S_ActiveHealers.pop(currentHealer);
+			currentHealer->SetStatus(KILD);
+			Q_Killed.enqueue(currentHealer);
+			KilledCount++;
+		}
+		//check to see if any of the enemies is frozen
+		if (currentHealer->Freezed()) {
+			S_ActiveHealers.pop(currentHealer);
+			currentHealer->SetStatus(FRST);
+			PQ_Frozen.enqueue(currentHealer);
+			FrostedCount++;
+		}
+		if (currentFreezer.Freezed()) {
+			Q_ActiveFreezers.dequeue(currentFreezer);
+			currentFreezer.SetStatus(FRST);
+			PQ_Frozen.enqueue(&currentFreezer);
+			FrostedCount++;
+		}
+		//then move the current time step forward
+		CurrentTimeStep++;
+		
+	
 	
 	}
 }

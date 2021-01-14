@@ -6,6 +6,9 @@
 #include "GUI\GUI.h"
 #include "Generic_DS/PriorityQ.h"
 #include "Generic_DS/Stack.h"
+#include "Enemies/Healer.h"
+#include "Enemies/Fighter.h"
+#include "Enemies/Freezer.h"
 
 // it is the controller of the project
 class Battle
@@ -25,11 +28,11 @@ private:
 
 	Queue<Enemy*> Q_Inactive;		//Queue of inactive enemies
 
-	Queue<Enemy *> Q_ActiveFreezers;	//queue for active freezers
+	Queue<Freezer *> Q_ActiveFreezers;	//queue for active freezers
 	Queue<Enemy*> Q_Killed;		//queue for killed enemies
-	PriorityQ<Enemy*> PQ_ActiveFighters; //priorityQ for active fighters
+	PriorityQ<Fighter*> PQ_ActiveFighters; //priorityQ for active fighters
 	PriorityQ<Enemy*> PQ_Frozen;		//priorityQ for frozen enemies
-	Stack<Enemy*> S_ActiveHealers; //stack for active healers
+	Stack<Healer*> S_ActiveHealers; //stack for active healers
 
 
 	/// ==> 
