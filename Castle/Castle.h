@@ -9,12 +9,15 @@
 
 class Castle
 {
+	double OrgHealth;
 	double Health;
 	int MaxEnemies;		// the maximum number of enemies a castle can attack at any time step
 	double Power;
 	double Threshold;
 	CSL_STATUS status;
 	double IceAmount;
+	int FirstFreezeStep;
+
 
 public:
 	Castle();
@@ -27,6 +30,7 @@ public:
 	void SetStatus(CSL_STATUS stat);
 	void SetIceAmount(double amount);
 
+	double GetOrgHealth() const;
 	double GetHealth() const;
 	int GetMaxEnemies() const;
 	double GetPower() const;
@@ -34,6 +38,7 @@ public:
 	CSL_STATUS GetStatus() const;
 	double GetIceAmount() const;
 
+	void Act(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep);
 	void ShootBullets(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep);
 
 	void ShootIce(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep);

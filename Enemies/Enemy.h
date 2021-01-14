@@ -31,7 +31,7 @@ protected:
 
 	int FreezeTime;
 
-	int FrstTimeFrst;
+	int FrstTimeFrosted;
 
 	int ReloadTime;
 
@@ -67,7 +67,7 @@ public:
 
 	void SetFreezeTime(int t);
 
-	void SetFrstTimeFrst(int t);
+	void SetFrstTimeFrosted(int t);
 
 	void SetReloadTime(int RL);
 
@@ -96,7 +96,7 @@ public:
 
 	int GetFreezeTime() const;
 
-	int GetFrstTimeFrst() const;
+	int GetFrstTimeFrosted() const;
 
 	int GetReloadTime() const;
     
