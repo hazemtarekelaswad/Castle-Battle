@@ -3,7 +3,7 @@
 Castle::Castle() {}
 
 Castle::Castle(double h, int n, double p, double th)
-	: MaxEnemies(n), Threshold(th), IceAmount(0)
+	: MaxEnemies(n), Threshold(th), IceAmount(0), FirstFreezeStep(0)
 {
 	SetHealth(h);
 	SetPower(p);
@@ -118,6 +118,102 @@ void Castle::ShootBullets(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healers
 			if (freezerPtr->GetHealth() == 0) {
 				freezerPtr->SetEnemyKilledTime(currTimeStep);
 				freezerPtr->SetKillDelay(currTimeStep - freezerPtr->GetFirstShotTime());
+			}
+		}
+		else
+			break;
+	}
+
+
+	for (int i = 0; i < MaxEnemies; ++i) {
+		if (!tempFighters.isEmpty()) {
+			Fighter* ptr;
+			tempFighters.dequeue(ptr);
+			fightersQ.enqueuePriority(ptr->GetPriFactor(), ptr);
+		}
+		else if (!tempHealers.isEmpty()) {
+			Healer* healerPtr;
+			tempHealers.pop(healerPtr);
+			healersStack.push(healerPtr);
+		}
+		else if (!tempFreezers.isEmpty()) {
+			Freezer* freezerPtr;
+			tempFreezers.dequeue(freezerPtr);
+			freezersQ.enqueue(freezerPtr);
+		}
+		else
+			break;
+	}
+}
+
+void Castle::ShootIce(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep) {
+
+	if (status == CSL_FRST)
+		return;
+
+	Queue<Fighter*> tempFighters;
+	Stack<Healer*> tempHealers;
+	Queue<Freezer*> tempFreezers;
+
+	for (int i = 0; i < MaxEnemies; ++i) {
+		if (!fightersQ.isEmpty()) {
+			Fighter* fighterPtr;
+			fightersQ.dequeue(fighterPtr);
+
+			if(fighterPtr->GetFrstTimeFrst() == -1)
+				fighterPtr->SetFrstTimeFrst(currTimeStep);
+			if ((currTimeStep - fighterPtr->GetFrstTimeFrst() + 1) % (fighterPtr->GetFreezeTime() + 1))
+				fighterPtr->SetStatus(FRST);
+			else {
+				fighterPtr->SetStatus(ACTV);
+				fighterPtr->SetFrstTimeFrst(-1);
+			}
+
+			tempFighters.enqueue(fighterPtr);
+
+			if (fighterPtr->GetFirstShotTime() == -1) {
+				fighterPtr->SetFirstShotTime(currTimeStep);
+				fighterPtr->SetFirstShotDelay(currTimeStep - fighterPtr->GetArrvTime());
+			}
+		}
+		else if (!healersStack.isEmpty()) {
+			Healer* healerPtr;
+			healersStack.pop(healerPtr);
+
+			if (healerPtr->GetFrstTimeFrst() == -1)
+				healerPtr->SetFrstTimeFrst(currTimeStep);
+			if ((currTimeStep - healerPtr->GetFrstTimeFrst() + 1) % (healerPtr->GetFreezeTime() + 1))
+				healerPtr->SetStatus(FRST);
+			else {
+				healerPtr->SetStatus(ACTV);
+				healerPtr->SetFrstTimeFrst(-1);
+			}
+
+			tempHealers.push(healerPtr);
+
+			if (healerPtr->GetFirstShotTime() == -1) {
+				healerPtr->SetFirstShotTime(currTimeStep);
+				healerPtr->SetFirstShotDelay(currTimeStep - healerPtr->GetArrvTime());
+			}
+		}
+		else if (!freezersQ.isEmpty()) {
+			Freezer* freezerPtr;
+			freezersQ.dequeue(freezerPtr);
+			
+			if (freezerPtr->GetFrstTimeFrst() == -1)
+				freezerPtr->SetFrstTimeFrst(currTimeStep);
+			if ((currTimeStep - freezerPtr->GetFrstTimeFrst() + 1) % (freezerPtr->GetFreezeTime() + 1))
+				freezerPtr->SetStatus(FRST);
+			else {
+				freezerPtr->SetStatus(ACTV);
+				freezerPtr->SetFrstTimeFrst(-1);
+			}
+
+			tempFreezers.enqueue(freezerPtr);
+
+			if (freezerPtr->GetFirstShotTime() == -1) {
+				freezerPtr->SetFirstShotTime(currTimeStep);
+				freezerPtr->SetFirstShotDelay(currTimeStep - freezerPtr->GetArrvTime());
 			}
 		}
 		else

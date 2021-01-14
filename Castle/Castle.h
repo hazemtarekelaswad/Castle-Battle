@@ -15,7 +15,6 @@ class Castle
 	double Threshold;
 	CSL_STATUS status;
 	double IceAmount;
-	bool IsShot;
 
 public:
 	Castle();
@@ -37,5 +36,6 @@ public:
 
 	void ShootBullets(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep);
 
+	void ShootIce(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep);
 };
 
