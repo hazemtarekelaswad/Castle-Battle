@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include <cmath>
 
 
 Enemy::Enemy(int id, int arrTime, int d) : ID(id),ArrvTime(arrTime), OrgHealth(Health)
@@ -20,8 +21,8 @@ Enemy :: Enemy (int id, int arrTime, ENMY_TYPE type, double H, double P, int RL,
 	EnemyKilledTime = -1;
 	KillDelay = 0;
 	LifeTime = FirstShotDelay + KillDelay;
-	FrstTimeFrst;
-	FreezeTime = (Enemy_Type == FIGHTER ? 180 : 200) / (Power * Distance); // is to be changed
+	FrstTimeFrosted = -1;
+	FreezeTime = std::ceil((Enemy_Type == FIGHTER ? 100 : 150) / (Power * Distance)); // is to be changed
 }
 
 Enemy::~Enemy()
@@ -110,8 +111,8 @@ void Enemy::SetFreezeTime(int t) {
 	FreezeTime = t;
 }
 
-void Enemy::SetFrstTimeFrst(int t) {
-	FrstTimeFrst = t;
+void Enemy::SetFrstTimeFrosted(int t) {
+	FrstTimeFrosted = t;
 }
 
 void Enemy :: SetReloadTime(int RL)
@@ -190,8 +191,8 @@ int Enemy::GetFreezeTime() const {
 	return FreezeTime;
 }
 
-int Enemy::GetFrstTimeFrst() const {
-	return FrstTimeFrst;
+int Enemy::GetFrstTimeFrosted() const {
+	return FrstTimeFrosted;
 }
 
 int Enemy ::  GetReloadTime() const

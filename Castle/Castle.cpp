@@ -1,12 +1,17 @@
 #include "Castle.h"
+#include<ctime>
 
 Castle::Castle() {}
 
 Castle::Castle(double h, int n, double p, double th)
-	: MaxEnemies(n), Threshold(th), IceAmount(0), FirstFreezeStep(0)
+	: MaxEnemies(n), Threshold(th), IceAmount(0), FirstFreezeStep(0), OrgHealth(h)
 {
 	SetHealth(h);
 	SetPower(p);
+}
+
+double Castle::GetOrgHealth() const {
+	return OrgHealth;
 }
 
 void Castle::SetHealth(double h)
@@ -58,7 +63,13 @@ double Castle::GetIceAmount() const {
 	return IceAmount;
 }
 
-
+void Castle::Act(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep) {
+	srand(time(NULL));
+	if(rand() % 5 == 0)
+		ShootIce(fightersQ, healersStack, freezersQ, currTimeStep);
+	else
+		ShootBullets(fightersQ, healersStack, freezersQ, currTimeStep);
+}
 
 void Castle::ShootBullets(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStack, Queue<Freezer*>& freezersQ, int currTimeStep) {
 
@@ -157,20 +168,16 @@ void Castle::ShootIce(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStac
 
 	for (int i = 0; i < MaxEnemies; ++i) {
 		if (!fightersQ.isEmpty()) {
+
 			Fighter* fighterPtr;
-			fightersQ.dequeue(fighterPtr);
-
-			if(fighterPtr->GetFrstTimeFrst() == -1)
-				fighterPtr->SetFrstTimeFrst(currTimeStep);
-			if ((currTimeStep - fighterPtr->GetFrstTimeFrst() + 1) % (fighterPtr->GetFreezeTime() + 1))
-				fighterPtr->SetStatus(FRST);
-			else {
-				fighterPtr->SetStatus(ACTV);
-				fighterPtr->SetFrstTimeFrst(-1);
-			}
-
+			fightersQ.dequeue(fighterPtr);              
 			tempFighters.enqueue(fighterPtr);
 
+			if (fighterPtr->GetStatus() != FRST) {
+				fighterPtr->SetStatus(FRST);
+				fighterPtr->SetFrstTimeFrosted(currTimeStep);
+			}
+				
 			if (fighterPtr->GetFirstShotTime() == -1) {
 				fighterPtr->SetFirstShotTime(currTimeStep);
 				fighterPtr->SetFirstShotDelay(currTimeStep - fighterPtr->GetArrvTime());
@@ -179,17 +186,14 @@ void Castle::ShootIce(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStac
 		else if (!healersStack.isEmpty()) {
 			Healer* healerPtr;
 			healersStack.pop(healerPtr);
+			tempHealers.push(healerPtr);
 
-			if (healerPtr->GetFrstTimeFrst() == -1)
-				healerPtr->SetFrstTimeFrst(currTimeStep);
-			if ((currTimeStep - healerPtr->GetFrstTimeFrst() + 1) % (healerPtr->GetFreezeTime() + 1))
+
+			if (healerPtr->GetStatus() != FRST) {
 				healerPtr->SetStatus(FRST);
-			else {
-				healerPtr->SetStatus(ACTV);
-				healerPtr->SetFrstTimeFrst(-1);
+				healerPtr->SetFrstTimeFrosted(currTimeStep);
 			}
 
-			tempHealers.push(healerPtr);
 
 			if (healerPtr->GetFirstShotTime() == -1) {
 				healerPtr->SetFirstShotTime(currTimeStep);
@@ -199,17 +203,12 @@ void Castle::ShootIce(PrtQueue<Fighter*>& fightersQ, Stack<Healer*>& healersStac
 		else if (!freezersQ.isEmpty()) {
 			Freezer* freezerPtr;
 			freezersQ.dequeue(freezerPtr);
-			
-			if (freezerPtr->GetFrstTimeFrst() == -1)
-				freezerPtr->SetFrstTimeFrst(currTimeStep);
-			if ((currTimeStep - freezerPtr->GetFrstTimeFrst() + 1) % (freezerPtr->GetFreezeTime() + 1))
-				freezerPtr->SetStatus(FRST);
-			else {
-				freezerPtr->SetStatus(ACTV);
-				freezerPtr->SetFrstTimeFrst(-1);
-			}
-
 			tempFreezers.enqueue(freezerPtr);
+
+			if (freezerPtr->GetStatus() != FRST) {
+				freezerPtr->SetStatus(FRST);
+				freezerPtr->SetFrstTimeFrosted(currTimeStep);
+			}
 
 			if (freezerPtr->GetFirstShotTime() == -1) {
 				freezerPtr->SetFirstShotTime(currTimeStep);
