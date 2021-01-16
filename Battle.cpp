@@ -112,7 +112,7 @@ void Battle::Silent_Mode() {
 	pGUI->PrintMessage("Welcome to Silent Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth())	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
@@ -133,7 +133,7 @@ void Battle::Interactive_Mode() {
 	pGUI->PrintMessage("Welcome to Interactive Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth())	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
@@ -157,7 +157,7 @@ void Battle::Step_Mode() {
 	pGUI->PrintMessage("Welcome to Step Mode");
 	pGUI->waitForClick();
 	this->ReadFile();
-	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth()>0)	//as long as some enemies are alive (should be updated in next phases)
+	while (KilledCount < EnemyCount && this->GetCastle()->GetHealth())	//as long as some enemies are alive (should be updated in next phases)
 	{
 		CurrentTimeStep++;
 		ActivateEnemies();
@@ -392,98 +392,121 @@ void Battle::UpdateFighters() {
 	int killedHealers = 0;
 	int killedFreezers = 0;
 
-	//for (int i = 0; i < EnemyCount; i++) {
+//for (int i = 0; i < EnemyCount; i++) {
+	if (!PQ_ActiveFighters.isEmpty()) {
+
 		PQ_ActiveFighters.peekFront(currentFighter);	//get the first enemy from each type
-		currentHealer = S_ActiveHealers.peek();
+	}
+	if (!S_ActiveHealers.isEmpty()) {
+
+	currentHealer = S_ActiveHealers.peek();
+	}
+	if (!Q_ActiveFreezers.isEmpty()) {
+
 		Q_ActiveFreezers.peekFront(currentFreezer);
-		//then the enemies should attack the castle
-		currentFighter->Act(GetCastle(), CurrentTimeStep);
-		currentFreezer->Act(GetCastle(), CurrentTimeStep);
-		//then they must move forward
-		currentFighter->Move();
-		currentFreezer->Move();
-		currentHealer->Move();
-		//if the health of anyone of them is less than the full health then the healer should heal them
-		if (currentFighter->GetHealth() < currentFighter->GetOrgHealth() || currentFreezer->GetHealth() < currentFreezer->GetOrgHealth()) {
-			if (currentFighter->GetDistance() - currentHealer->GetDistance() <= 2) {
-				currentHealer->Act(currentFighter, CurrentTimeStep);
-			}
-			if (currentFreezer->GetDistance() - currentHealer->GetDistance() <= 2) {
-				currentHealer->Act(currentFreezer, CurrentTimeStep);
-			}
-		}
-		//the castle should also attack enemies
-		this->GetCastle()->Act(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
-		//this->GetCastle()->ShootBullets(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
-	//	this->GetCastle()->ShootIce(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
-		//if the health of any of the enemies is less than then move him to the killed list
+	}
+	//then the enemies should attack the castle
+	currentFighter->Act(GetCastle(), CurrentTimeStep);
+	currentFreezer->Act(GetCastle(), CurrentTimeStep);
+	//then they must move forward
+	currentFighter->Move();
+	currentFreezer->Move();
+	currentHealer->Move();
+	//if the health of anyone of them is less than the full health then the healer should heal them
+	//if (currentFighter->GetHealth() < currentFighter->GetOrgHealth() || currentFreezer->GetHealth() < currentFreezer->GetOrgHealth()) {
+	//	if (currentFighter->GetDistance() - currentHealer->GetDistance() <= 2) {
+	//		currentHealer->Act(currentFighter, CurrentTimeStep);
+	//	}
+	//	if (currentFreezer->GetDistance() - currentHealer->GetDistance() <= 2) {
+	//		currentHealer->Act(currentFreezer, CurrentTimeStep);
+	//	}
+	//}
+	if (currentFighter->GetHealth() < currentFighter->GetOrgHealth()) {
+		currentHealer->Act(currentFighter, CurrentTimeStep);
+	}
+	if (currentFreezer->GetHealth() < currentFreezer->GetOrgHealth()) {
+		currentHealer->Act(currentFreezer, CurrentTimeStep);
+	}
+	//the castle should also attack enemies
+	this->GetCastle()->Act(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+	//this->GetCastle()->ShootBullets(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+//	this->GetCastle()->ShootIce(PQ_ActiveFighters, S_ActiveHealers, Q_ActiveFreezers, CurrentTimeStep);
+	//if the health of any of the enemies is less than then move him to the killed list
 
-		if (currentFighter->GetHealth() < 1) {
-			PQ_ActiveFighters.dequeue(currentFighter);
-			currentFighter->SetStatus(KILD);
-			Q_Killed.enqueue(currentFighter);
-			KilledCount++;
+	if (currentFighter->GetHealth() < 1) {
+		PQ_ActiveFighters.dequeue(currentFighter);
+		currentFighter->SetStatus(KILD);
+		Q_Killed.enqueue(currentFighter);
+		KilledCount++;
 
-			--ActiveCount;
+		--ActiveCount;
 
-			killedFighters++;
-			activeFightersNum--;
-		}
-		if (currentFreezer->GetHealth() < 1) {
-			Q_ActiveFreezers.dequeue(currentFreezer);
-			currentFreezer->SetStatus(KILD);
-			Q_Killed.enqueue(currentFreezer);
-			KilledCount++;
+		killedFighters++;
+		activeFightersNum--;
+	}
+	if (currentFreezer->GetHealth() < 1) {
+		Q_ActiveFreezers.dequeue(currentFreezer);
+		currentFreezer->SetStatus(KILD);
+		Q_Killed.enqueue(currentFreezer);
+		KilledCount++;
 
-			--ActiveCount;
-			killedFighters++;
-			activeFightersNum--;
+		--ActiveCount;
+		killedFighters++;
+		activeFightersNum--;
 
-		}
-		if (currentHealer->GetHealth() < 1) {
-			S_ActiveHealers.pop(currentHealer);
-			currentHealer->SetStatus(KILD);
-			Q_Killed.enqueue(currentHealer);
-			KilledCount++;
+	}
+	if (currentHealer->GetHealth() < 1) {
+		S_ActiveHealers.pop(currentHealer);
+		currentHealer->SetStatus(KILD);
+		Q_Killed.enqueue(currentHealer);
+		KilledCount++;
 
-			--ActiveCount;
-			killedFighters++;
-			activeFightersNum--;
+		--ActiveCount;
+		killedFighters++;
+		activeFightersNum--;
 
-		}
+	}
 
-		//check to see if any of the enemies is frozen
-		if (currentHealer->Freezed()) {
-			S_ActiveHealers.pop(currentHealer);
-			currentHealer->SetStatus(FRST);
-			PQ_Frozen.enqueuePriority(100 - currentHealer->GetFreezeTime(), currentHealer);
-			FrostedCount++;
+	//check to see if any of the enemies is frozen
+	if (currentHealer->Freezed()) {
+		S_ActiveHealers.pop(currentHealer);
+		currentHealer->SetStatus(FRST);
+		PQ_Frozen.enqueuePriority(100 - currentHealer->GetFreezeTime(), currentHealer);
+		FrostedCount++;
 
-			--ActiveCount;
+		--ActiveCount;
 
-			frostedHealers++;
-		}
-		if (currentFreezer->Freezed()) {
-			Q_ActiveFreezers.dequeue(currentFreezer);
-			currentFreezer->SetStatus(FRST);
-			PQ_Frozen.enqueuePriority(100 - currentFreezer->GetFreezeTime(), currentFreezer);
-			FrostedCount++;
+		frostedHealers++;
+	}
+	if (currentFreezer->Freezed()) {
+		Q_ActiveFreezers.dequeue(currentFreezer);
+		currentFreezer->SetStatus(FRST);
+		PQ_Frozen.enqueuePriority(100 - currentFreezer->GetFreezeTime(), currentFreezer);
+		FrostedCount++;
 
-			--ActiveCount;
-			frostedHealers++;
+		--ActiveCount;
+		frostedHealers++;
 
-		}
-		//then move the current time step forward
-		pGUI->UpdateStatusBar(CurrentTimeStep);
-		CurrentTimeStep++;
+	}
+	if (currentFighter->Freezed()) {
+		PQ_ActiveFighters.dequeue(currentFighter);
+		currentFighter->SetStatus(FRST);
+		PQ_Frozen.enqueuePriority(100 - currentFighter->GetFreezeTime(), currentFighter);
+		FrostedCount++;
+		--ActiveCount;
+		frostedFighters++;
+	}
+	//then move the current time step forward
+	pGUI->UpdateStatusBar(CurrentTimeStep);
+	CurrentTimeStep++;
 		
-		if (GetCastle()->GetStatus() == 0) {
-			castleFrosted = false;
-		}
-		else {
-			castleFrosted = true;
-		}
-		PrintParams(GetCastle()->GetHealth(), castleFrosted, activeFightersNum, activeHealersNum, activeFreezersNum, frostedFighters, frostedHealers, frostedFreezers, killedFighters, killedHealers, killedFreezers);
+	if (GetCastle()->GetStatus() == 0) {
+		castleFrosted = false;
+	}
+	else {
+		castleFrosted = true;
+	}
+	PrintParams(GetCastle()->GetHealth(), castleFrosted, activeFightersNum, activeHealersNum, activeFreezersNum, frostedFighters, frostedHealers, frostedFreezers, killedFighters, killedHealers, killedFreezers);
 	
 	
 	//}
